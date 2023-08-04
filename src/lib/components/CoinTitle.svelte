@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { pbImgAPI } from '$lib/config';
 	import { Avatar } from '@skeletonlabs/skeleton';
 	export let coinId: string;
 	export let coinLogo: string;

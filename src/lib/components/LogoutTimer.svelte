@@ -2,9 +2,10 @@
 	import { onMount } from 'svelte';
 	import Clock from 'svelte-material-icons/Clock.svelte';
 	import { Toast, toastStore } from '@skeletonlabs/skeleton';
+	import { mb, isLogin } from '$lib/store/mbstore';
 	import iconLogout from '$lib/images/icon_logout.png';
 
-	const logoutLimitedTime = 600; // 10분
+	const logoutLimitedTime = 30; // 10분
 	let logoutTime = logoutLimitedTime;
 	const setLogoutTimer = (time: number): string => {
 		if (time < 1) setLogout();
@@ -42,7 +43,8 @@
 
 	const setLogout = (): void => {
 		clearInterval(logoutTimer);
-		console.log('logout');
+		localStorage.clear();
+		mb.set({ mb_id: '' });
 	};
 
 	const callLogout = (): void => {
@@ -58,13 +60,17 @@
 </script>
 
 <div id="logout-box">
-	<button id="btnTimer" on:click={timerReset}>
-		<Clock />
-		<span class="timer">{setLogoutTimer(logoutTime)}</span>
-	</button>
-	<button id="btnIconLogout" on:click={callLogout}>
-		<img src={iconLogout} class="icon-logout" alt="logout" />
-	</button>
+	{#if $isLogin}
+		<button id="btnTimer" on:click={timerReset}>
+			<Clock />
+			<span class="timer">{setLogoutTimer(logoutTime)}</span>
+		</button>
+		<button id="btnIconLogout" on:click={callLogout}>
+			<img src={iconLogout} class="icon-logout" alt="logout" />
+		</button>
+	{:else}
+		<a class="btn" href="./gate">Login</a>
+	{/if}
 </div>
 
 <Toast position="t" />

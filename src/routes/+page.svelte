@@ -2,19 +2,19 @@
 	import type { PageData } from './$types';
 	export let data: PageData;
 	import { scale } from 'svelte/transition';
-	console.log(data);
+	const latestArr = data.data.list;
+	const bo_subject = data.data.bo_subject;
+	// console.log(latestArr);
 </script>
 
 <div in:scale={{ duration: 150 }}>
 	<div>
-		최신글 페이지에서 ajax 쓰듯이 뽑아오기
-
 		<div class="mt-5 font-bold">
-			{data.data.bo_subject}
+			<i class="xi-home" />{bo_subject}
 		</div>
 		<div>
-			{#if data.data.list?.length > 0}
-				{#each data.data.list as item}
+			{#if latestArr?.length > 0}
+				{#each latestArr as item}
 					<div class="px-2 py-2 border-b flex">
 						<div>
 							{item.wr_subject}
@@ -30,6 +30,9 @@
 		</div>
 	</div>
 	<!-- <ChartCoins coinsList={data.coinsList} /> -->
+	<div class="p-4">
+		<a href="./gate">GATE</a>
+	</div>
 </div>
 
 <style lang="postcss">

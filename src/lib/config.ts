@@ -1,4 +1,5 @@
 import { writable } from 'svelte/store';
+export const API_G5_URL = import.meta.env.VITE_API_ENDPOINT;
 export const writableTrSort = writable('');
 export const writableCoinId = writable('');
 export const writablePriceValue = writable('');

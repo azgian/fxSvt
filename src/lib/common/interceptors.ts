@@ -29,7 +29,7 @@ export const setInterceptors = (instance: any) => {
 
 	//로그아웃하기
 	const logout = (code: string) => {
-		mb.set('');
+		mb.set({ mb_id: '' });
 		browser && localStorage.clear();
 
 		if (browser) goto(start_url);

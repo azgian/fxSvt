@@ -24,7 +24,7 @@
 		"@typescript-eslint/eslint-plugin": "^5.45.0",
 		"@typescript-eslint/parser": "^5.45.0",
 		"autoprefixer": "^10.4.14",
-		"dotenv": "^16.1.4",
+		"dotenv": "^16.3.1",
 		"eslint": "^8.28.0",
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-svelte3": "^4.0.0",
@@ -42,11 +42,11 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@floating-ui/dom": "^1.2.9",
+		"@floating-ui/dom": "^1.5.1",
 		"@sveltestack/svelte-query": "^1.6.0",
 		"axios": "^1.4.0",
 		"pocketbase": "^0.14.3",
 		"svelte-local-storage-store": "^0.5.0",
-		"svelte-material-icons": "^3.0.4"
+		"svelte-material-icons": "^3.0.5"
 	}
 }

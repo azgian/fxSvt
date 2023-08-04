@@ -3,17 +3,23 @@
 	import '@skeletonlabs/skeleton/styles/all.css';
 	import '../app.postcss';
 	import './app.css';
-	import { AppShell, AppBar, Drawer } from '@skeletonlabs/skeleton';
-	import AccountCircle from 'svelte-material-icons/AccountCircle.svelte';
+	import { AppShell, AppBar } from '@skeletonlabs/skeleton';
 	import MenuBox from '$lib/components/MenuBox.svelte';
 	import LogoutTimer from '$lib/components//LogoutTimer.svelte';
+	import TopBar from '$lib/components//TopBar.svelte';
 	import { beforeUpdate } from 'svelte';
 	import { page } from '$app/stores';
 	import { writableTrSort, writableCoinId } from '$lib/config';
-	beforeUpdate(() => {
-		writableTrSort.set($page.url.searchParams.get('trSort') ?? '');
-		writableCoinId.set($page.url.searchParams.get('coinId') ?? '');
-	});
+	import { mb, isLogin } from '$lib/store/mbstore';
+	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
+	import { storePopup } from '@skeletonlabs/skeleton';
+	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
+	// beforeUpdate(() => {
+	// 	writableTrSort.set($page.url.searchParams.get('trSort') ?? '');
+	// 	writableCoinId.set($page.url.searchParams.get('coinId') ?? '');
+	// });
+	$: if ($mb?.mb_id) isLogin.set(true);
+	else isLogin.set(false);
 </script>
 
 <AppShell
@@ -25,12 +31,7 @@
 	<svelte:fragment slot="pageHeader">
 		<AppBar gridColumns="grid-cols-3" slotDefault="place-self-center" slotTrail="place-content-end">
 			<svelte:fragment slot="lead">
-				<div class="paddingLeft320">
-					<div id="user-box">
-						<AccountCircle />
-						<span class="user-cash">2,002,340</span>
-					</div>
-				</div>
+				<TopBar />
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
 				<LogoutTimer />
@@ -40,6 +41,9 @@
 	<div class="paddingLeft320">
 		<div id="container-box">
 			<slot />
+			<!-- <pre class="mt-4">
+				{JSON.stringify($mb)}
+			</pre> -->
 		</div>
 	</div>
 	<MenuBox />
@@ -56,16 +60,6 @@
 		height: 100%;
 		padding: 15px;
 		padding-bottom: 150px;
-	}
-	#user-box {
-		display: flex;
-		justify-content: start;
-		align-items: center;
-		font-size: 2rem;
-	}
-	#user-box .user-cash {
-		margin-left: 10px;
-		font-size: 1.25rem;
 	}
 	@media (max-width: 400.98px) {
 	}
