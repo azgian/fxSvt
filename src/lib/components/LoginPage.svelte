@@ -8,9 +8,7 @@
 	import { scale } from 'svelte/transition';
 	import { popup } from '@skeletonlabs/skeleton';
 	import type { PopupSettings } from '@skeletonlabs/skeleton';
-
-	if ($isLogin) goto('./');
-
+	export let agentId: string; //추천인 아이디
 	const popupInfo: PopupSettings = {
 		event: 'click',
 		target: 'popupInfo',
@@ -50,13 +48,15 @@
 
 	let getAuth = false;
 	let numberCode: string;
+	// const recommendId = agentId;
 	const sendCode = async () => {
 		const params = {
 			authCode,
 			initCode,
 			numberCode,
 			isRegister,
-			email
+			email,
+			recommendId: agentId
 		};
 		const { data } = await instance.post('member/auth/Send_code', params);
 		isSendCode = data?.data?.is_send_code;

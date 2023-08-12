@@ -18,3 +18,4 @@ export const setInitAmount = (): void => {
 		lastCalc.value = '0';
 	}
 };
+export const agentLv = 2;

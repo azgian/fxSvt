@@ -1,18 +1,21 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import Clock from 'svelte-material-icons/Clock.svelte';
+	import IconXi from './IconXi.svelte';
 	import { Toast, toastStore } from '@skeletonlabs/skeleton';
 	import { mb, isLogin } from '$lib/store/mbstore';
 	import iconLogout from '$lib/images/icon_logout.png';
 
-	const logoutLimitedTime = 30; // 10분
+	const logoutLimitedTime = 600; // 10분
 	let logoutTime = logoutLimitedTime;
 	const setLogoutTimer = (time: number): string => {
 		if (time < 1) setLogout();
 		const ToastSettings = {
 			message:
-				time + '초 후 로그아웃 됩니다. 로그인 시간을 연장하시려면 [시간 연장] 버튼을 클릭하세요.',
-			timeout: 3000,
+				time +
+				'초 후 로그아웃 됩니다.<br>' +
+				'로그인 시간을 연장하시려면<br>' +
+				'[시간 연장] 버튼을 클릭하세요.',
+			timeout: 5000,
 			action: {
 				label: '시간 연장',
 				response: () => timerReset()
@@ -44,12 +47,15 @@
 	const setLogout = (): void => {
 		clearInterval(logoutTimer);
 		localStorage.clear();
-		mb.set({ mb_id: '' });
+		// mb.set(obj_mb_info);
+		mb.set({});
+		isLogin.set(false);
 	};
 
 	const callLogout = (): void => {
 		const LogoutSettings = {
 			message: '로그아웃 하시겠습니까?',
+			timeout: 3000,
 			action: {
 				label: 'Logout',
 				response: () => setLogout()
@@ -60,17 +66,13 @@
 </script>
 
 <div id="logout-box">
-	{#if $isLogin}
-		<button id="btnTimer" on:click={timerReset}>
-			<Clock />
-			<span class="timer">{setLogoutTimer(logoutTime)}</span>
-		</button>
-		<button id="btnIconLogout" on:click={callLogout}>
-			<img src={iconLogout} class="icon-logout" alt="logout" />
-		</button>
-	{:else}
-		<a class="btn" href="./gate">Login</a>
-	{/if}
+	<button id="btnTimer" on:click={timerReset}>
+		<IconXi iconName="time" />
+		<span class="timer">{setLogoutTimer(logoutTime)}</span>
+	</button>
+	<button id="btnIconLogout" on:click={callLogout}>
+		<img src={iconLogout} class="icon-logout" alt="logout" />
+	</button>
 </div>
 
 <Toast position="t" />

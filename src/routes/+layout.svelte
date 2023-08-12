@@ -9,6 +9,8 @@
 	import TopBar from '$lib/components//TopBar.svelte';
 	import { beforeUpdate } from 'svelte';
 	import { page } from '$app/stores';
+	import { get } from 'svelte/store';
+	import { dev } from '$app/environment';
 	import { writableTrSort, writableCoinId } from '$lib/config';
 	import { mb, isLogin } from '$lib/store/mbstore';
 	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
@@ -18,7 +20,8 @@
 	// 	writableTrSort.set($page.url.searchParams.get('trSort') ?? '');
 	// 	writableCoinId.set($page.url.searchParams.get('coinId') ?? '');
 	// });
-	$: if ($mb?.mb_id) isLogin.set(true);
+	// mb.set({});
+	if ($mb.mb_level >= 2) isLogin.set(true);
 	else isLogin.set(false);
 </script>
 
@@ -34,16 +37,20 @@
 				<TopBar />
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
-				<LogoutTimer />
+				{#if $isLogin}
+					<LogoutTimer />
+				{/if}
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>
 	<div class="paddingLeft320">
 		<div id="container-box">
 			<slot />
-			<!-- <pre class="mt-4">
+			{#if dev}
+				<!-- <pre class="mt-4">
 				{JSON.stringify($mb)}
 			</pre> -->
+			{/if}
 		</div>
 	</div>
 	<MenuBox />

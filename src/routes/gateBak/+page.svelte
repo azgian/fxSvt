@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { instance } from '$lib/common/api';
-	import { mb, isLogin } from '$lib/store/mbstore';
+	import { mb, isLogin, obj_mb_info } from '$lib/store/mbstore';
 	import { dev } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import IconXi from '$lib/components/IconXi.svelte';
@@ -26,7 +26,7 @@
 			mb_password = '';
 		} else {
 			localStorage.clear();
-			mb.set({ mb_id: '' });
+			mb.set(obj_mb_info);
 		}
 		//jwt 토큰 받아와 저장
 	};
