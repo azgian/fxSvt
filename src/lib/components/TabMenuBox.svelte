@@ -1,33 +1,22 @@
 <script lang="ts">
-	import { resetTimer, setInitAmount } from '$lib/config';
 	import { page } from '$app/stores';
-	const pathName = $page.url.pathname.split('/');
+	import { resetTimer } from '$lib/config';
+	import { scale } from 'svelte/transition';
 	export let tabsArr: { link: string; name: string }[];
-	export let logId: string;
-	export let targetParam: string;
-	export let targetVal: string;
-	const setParam = (pageUrl: URL, val: string) => {
-		let tabUrl = logId === 'non' ? pageUrl : String(pageUrl).replace(`/${logId}`, '');
-		let url = new URL(tabUrl);
-		url.searchParams.set(targetParam, val);
-		return url.href;
-	};
-	const setInit = (): void => {
-		if (pathName[3] !== 'request') return;
-		setInitAmount();
-	};
+	export let currUrl: string;
+	export let baseUrl: string;
 </script>
 
-<div id="tabMenuBox">
+<div id="tabMenuBox" in:scale={{ duration: 150 }}>
 	<div class="tabMenuBox btn-group variant-ringed">
 		{#each tabsArr as tab}
-			{@const getTabUrl = () => setParam($page.url, tab.link)}
-			{@const tabUrl = getTabUrl()}
+			{@const isBaseUrl = $page.url.pathname === '/' + baseUrl ? baseUrl + '/' : ''}
+			{@const tabLink = tab.link === baseUrl ? './' : tab.link}
+			{@const isCurrUrl = !currUrl ? './' : currUrl}
 			<a
-				href={tabUrl}
-				class="btn {tab.link === targetVal ? 'variant-ghost-tertiary' : ''}"
+				href={isBaseUrl + tabLink}
+				class="btn {tabLink === isCurrUrl ? 'variant-ghost-tertiary' : ''}"
 				on:click={resetTimer}
-				on:click={setInit}
 				>{tab.name}
 			</a>
 		{/each}

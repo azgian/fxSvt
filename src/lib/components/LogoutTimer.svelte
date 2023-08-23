@@ -2,8 +2,9 @@
 	import { onMount } from 'svelte';
 	import IconXi from './IconXi.svelte';
 	import { Toast, toastStore } from '@skeletonlabs/skeleton';
-	import { mb, isLogin } from '$lib/store/mbstore';
+	import { mb, isLogin, objMbInfo } from '$lib/store/mbstore';
 	import iconLogout from '$lib/images/icon_logout.png';
+	import { goto } from '$app/navigation';
 
 	const logoutLimitedTime = 600; // 10분
 	let logoutTime = logoutLimitedTime;
@@ -47,9 +48,9 @@
 	const setLogout = (): void => {
 		clearInterval(logoutTimer);
 		localStorage.clear();
-		// mb.set(obj_mb_info);
-		mb.set({});
+		mb.set(objMbInfo);
 		isLogin.set(false);
+		goto('/');
 	};
 
 	const callLogout = (): void => {

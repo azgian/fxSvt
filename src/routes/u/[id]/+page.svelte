@@ -18,7 +18,7 @@
 		const { data } = await instance.post('member/info/Get_member_info', params);
 		isMember = data?.data?.isMember;
 		member = data?.data?.member;
-		if (dev) console.log('D ', member);
+		if (dev) console.log('D in [id] ', member);
 		if (isMember && member.mb_level >= agentLv) recommendId.set(member.mb_id);
 		else recommendId.set('');
 	};

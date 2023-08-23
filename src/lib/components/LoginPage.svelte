@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import { instance } from '$lib/common/api';
 	import { mb, isLogin } from '$lib/store/mbstore';
 	import { dev } from '$app/environment';
@@ -8,7 +9,7 @@
 	import { scale } from 'svelte/transition';
 	import { popup } from '@skeletonlabs/skeleton';
 	import type { PopupSettings } from '@skeletonlabs/skeleton';
-	export let agentId: string; //추천인 아이디
+	export let agentId: string = ''; //추천인 아이디
 	const popupInfo: PopupSettings = {
 		event: 'click',
 		target: 'popupInfo',
@@ -61,8 +62,6 @@
 		const { data } = await instance.post('member/auth/Send_code', params);
 		isSendCode = data?.data?.is_send_code;
 		getAuth = data?.data?.get_auth;
-		// if (dev) console.log('D: ', getAuth, ' / Data: ', data);
-		// if (dev) console.log('Data ', data);
 		if (!getAuth) setRefresh();
 		else {
 			localStorage.setItem('accessToken', data?.data?.accessToken);
@@ -70,12 +69,14 @@
 			const mb_info = data.data.mb;
 			mb.set(mb_info);
 			isLogin.set(true);
-			if (dev) console.log('mb_info.mb_id: ', mb_info.mb_id);
-			if (dev) console.log('data: ', data);
+			if (dev) {
+				console.log('mb_info.mb_id: ', mb_info.mb_id);
+				console.log('data: ', data);
+			}
 			if (!isRegister) {
-				goto('./'); //로그인
+				goto('/'); //로그인
 			} else {
-				setRefresh();
+				goto('/office'); //회원정보 설정
 			}
 		}
 	};
@@ -96,28 +97,31 @@
 		numberCode = '';
 		setDisabled(false);
 	};
+	// console.log('page: ', $page.url.pathname);
 </script>
 
 <div class="wrap-box" in:scale={{ duration: 150 }}>
 	<form>
-		<div class="flex mb-4">
-			<label class="flex items-center space-x-3">
-				<input
-					class="checkbox setDisabled"
-					type="checkbox"
-					bind:checked={isRegister}
-					on:change={chkRegister}
-				/>
-				<h4 class="text-surface-300">회원가입</h4>
-			</label>
-			<button use:popup={popupInfo} type="button" class="ms-6">
-				<IconXi iconName="help" fontSize="30px" addClass="text-secondary-500" />
-			</button>
-			<div class="card p-4 variant-filled-secondary shadow-xl" data-popup="popupInfo">
-				<div>회원가입을 원하시면 체크하세요.</div>
-				<div class="arrow variant-filled-secondary" />
+		{#if $page.url.pathname.startsWith('/u')}
+			<div class="flex mb-4">
+				<label class="flex items-center space-x-3">
+					<input
+						class="checkbox setDisabled"
+						type="checkbox"
+						bind:checked={isRegister}
+						on:change={chkRegister}
+					/>
+					<h4 class="text-surface-400">회원가입</h4>
+				</label>
+				<button use:popup={popupInfo} type="button" class="ms-6">
+					<IconXi iconName="help" fontSize="30px" addClass="text-secondary-500" />
+				</button>
+				<div class="card p-4 variant-filled-secondary shadow-xl" data-popup="popupInfo">
+					<div>회원가입을 원하시면 체크하세요.</div>
+					<div class="arrow variant-filled-secondary" />
+				</div>
 			</div>
-		</div>
+		{/if}
 		<input
 			class="input setDisabled"
 			bind:value={email}
@@ -126,7 +130,7 @@
 			placeholder="이메일을 입력하세요."
 			required
 		/>
-		<div class="flex justify-end mt-2">
+		<div class="flex justify-end mt-4">
 			<button class="btn {btnClass} setDisabled" on:click={reqCode}>
 				<span><IconXi iconName="mail" /></span>
 				<span>{btnTxt} 인증코드 받기</span>
@@ -153,7 +157,7 @@
 							required
 						/>
 					</div>
-					<div class="flex justify-between mt-2">
+					<div class="flex justify-between mt-4">
 						<button class="btn variant-filled-surface" type="button" on:click={setRefresh}
 							><span><IconXi iconName="refresh" /></span><span>인증초기화</span></button
 						>

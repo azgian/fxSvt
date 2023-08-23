@@ -18,4 +18,16 @@ export const setInitAmount = (): void => {
 		lastCalc.value = '0';
 	}
 };
-export const agentLv = 2;
+export const lvArray = [
+	{ id: 1, name: '비회원' },
+	{ id: 2, name: '회원' },
+	{ id: 4, name: 'IB' },
+	{ id: 6, name: 'BR' },
+	{ id: 7, name: 'SYS' },
+	{ id: 9, name: 'SYS' },
+	{ id: 10, name: 'SYS' }
+];
+export const getLvName = (lv: number) => {
+	const lvObj = lvArray.find((obj) => obj.id === lv);
+	return lvObj?.name;
+};

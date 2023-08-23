@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { resetTimer } from '$lib/config';
-	import { isLogin } from '$lib/store/mbstore';
+	import { mb, isLogin } from '$lib/store/mbstore';
 	import IconXi from '$lib/components/IconXi.svelte';
 	const siteLogoSrc = '//' + $page.url.host + '/src/lib/images/logo_fynx.png';
 	const menuList = [
-		{ slug: 'main', name: 'Main', icon: 'browser-text' },
-		{ slug: 'exch', name: 'Exchange', icon: 'renew' },
-		{ slug: 'sys', name: 'Sys', icon: 'server' }
+		{ slug: 'main', name: 'Main', icon: 'browser-text', lv: 2 },
+		{ slug: 'exch', name: 'Exchange', icon: 'renew', lv: 2 },
+		{ slug: 'office', name: 'Office', icon: 'file-check-o', lv: 2 },
+		{ slug: 'sys', name: 'Sys', icon: 'server', lv: 6 }
 	];
 </script>
 
@@ -21,19 +22,21 @@
 		<nav id="menu-box">
 			{#each menuList as siteMenu, i}
 				{@const menuHref = '//' + $page.url.host + '/' + siteMenu.slug}
-				<a href={i === 0 ? '/' : menuHref} on:click={resetTimer}>
-					<li
-						class={(i === 0 && $page.url.pathname === '/') ||
-						$page.url.pathname.startsWith('/' + siteMenu.slug)
-							? 'current'
-							: undefined}
-					>
-						<IconXi iconName={siteMenu.icon} fontSize="40px" />
-						<div class="menuName">
-							{siteMenu.name}
-						</div>
-					</li>
-				</a>
+				{#if $mb.mb_level >= siteMenu.lv}
+					<a href={i === 0 ? '/' : menuHref} on:click={resetTimer}>
+						<li
+							class={(i === 0 && $page.url.pathname === '/') ||
+							$page.url.pathname.startsWith('/' + siteMenu.slug)
+								? 'current'
+								: undefined}
+						>
+							<IconXi iconName={siteMenu.icon} fontSize="40px" />
+							<div class="menuName">
+								{siteMenu.name}
+							</div>
+						</li>
+					</a>
+				{/if}
 			{/each}
 		</nav>
 	{/if}
