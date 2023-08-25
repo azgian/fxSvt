@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
 	import IconXi from './IconXi.svelte';
 	import { Toast, toastStore } from '@skeletonlabs/skeleton';
 	import { mb, isLogin, objMbInfo } from '$lib/store/mbstore';
@@ -47,10 +48,10 @@
 
 	const setLogout = (): void => {
 		clearInterval(logoutTimer);
+		if ($page.route.id !== '/') goto('/');
 		localStorage.clear();
 		mb.set(objMbInfo);
 		isLogin.set(false);
-		goto('/');
 	};
 
 	const callLogout = (): void => {

@@ -51,18 +51,17 @@
 	<div class="paddingLeft320">
 		<div id="container-box">
 			<slot />
-			<!-- {#if dev}
-				<pre class="mt-4">
-				{JSON.stringify($mb)}
-				{JSON.stringify($isLogin)}
-				{JSON.stringify($page.route.id)}
-				{sectName}
-				{$page.route.id?.startsWith('/office')}
-				{JSON.stringify($page.params.slug)}
-				{JSON.stringify($page.url.host)}
-				{JSON.stringify($page.params.slug)}
-			</pre>
-			{/if} -->
+			<!-- {#if dev} -->
+			<!-- <pre class="mt-4"> -->
+			<!-- {JSON.stringify($mb)} -->
+			<!-- {JSON.stringify($isLogin)} -->
+			<!-- {JSON.stringify($page.route.id)} -->
+			<!-- {sectName} -->
+			<!-- {$page.route.id?.startsWith('/office')} -->
+			<!-- {JSON.stringify($page.params.slug)} -->
+			<!-- {JSON.stringify($page.url.host)} -->
+			<!-- </pre> -->
+			<!-- {/if} -->
 		</div>
 	</div>
 	<MenuBox />

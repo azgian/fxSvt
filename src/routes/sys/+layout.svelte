@@ -8,8 +8,8 @@
 	const baseUrl = pageRouteId[1];
 	const tabsArr = [
 		{ link: baseUrl, name: '회원관리' },
-		{ link: 'tab1', name: 'Tab1' },
-		{ link: 'tab2', name: 'Tab2' }
+		{ link: 'tab1', name: 'IB관리' },
+		{ link: 'tab2', name: 'BR관리' }
 	];
 </script>
 

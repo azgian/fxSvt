@@ -14,11 +14,6 @@
 
 <div id="menu-wrap">
 	{#if $isLogin}
-		<div id="logo-box">
-			<a href="/" on:click={resetTimer}>
-				<img src={siteLogoSrc} alt="logo" />
-			</a>
-		</div>
 		<nav id="menu-box">
 			{#each menuList as siteMenu, i}
 				{@const menuHref = '//' + $page.url.host + '/' + siteMenu.slug}
@@ -53,16 +48,8 @@
 		width: 320px;
 		height: 100vh;
 		background: #151547;
-		z-index: 10;
-	}
-	#logo-box {
-		width: 100%;
-		padding: 25px 0;
-		text-align: center;
-	}
-	#logo-box img {
-		width: 180px;
-		margin: 0 auto;
+		z-index: 9;
+		padding-top: 95px;
 	}
 	#menu-box {
 		width: 220px;
@@ -101,9 +88,7 @@
 			top: auto;
 			width: 100%;
 			height: 80px;
-		}
-		#logo-box {
-			display: none;
+			padding-top: 0;
 		}
 		#menu-box {
 			display: flex;
