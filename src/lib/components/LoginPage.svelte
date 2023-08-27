@@ -49,7 +49,6 @@
 
 	let getAuth = false;
 	let numberCode: string;
-	// const recommendId = agentId;
 	const sendCode = async () => {
 		const params = {
 			authCode,
@@ -70,8 +69,8 @@
 			mb.set(mb_info);
 			isLogin.set(true);
 			if (dev) {
-				console.log('mb_info.mb_id: ', mb_info.mb_id);
-				console.log('data: ', data);
+				// console.log('mb_info.mb_id: ', mb_info.mb_id);
+				console.log('mb_info: ', mb_info);
 			}
 			if (!isRegister) {
 				goto('/'); //로그인
@@ -97,7 +96,6 @@
 		numberCode = '';
 		setDisabled(false);
 	};
-	// console.log('page: ', $page.url.pathname);
 </script>
 
 <div class="wrap-box" in:scale={{ duration: 150 }}>

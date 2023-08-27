@@ -2,7 +2,8 @@
 	import { page } from '$app/stores';
 	import { resetTimer } from '$lib/config';
 	import { scale } from 'svelte/transition';
-	export let tabsArr: { link: string; name: string }[];
+	import { mb } from '$lib/store/mbstore';
+	export let tabsArr: { link: string; name: string; mbLv: number }[];
 	export let currUrl: string;
 	export let baseUrl: string;
 </script>
@@ -13,12 +14,14 @@
 			{@const isBaseUrl = $page.url.pathname === '/' + baseUrl ? baseUrl + '/' : ''}
 			{@const tabLink = tab.link === baseUrl ? './' : tab.link}
 			{@const isCurrUrl = !currUrl ? './' : currUrl}
-			<a
-				href={isBaseUrl + tabLink}
-				class="btn {tabLink === isCurrUrl ? 'variant-ghost-tertiary' : ''}"
-				on:click={resetTimer}
-				>{tab.name}
-			</a>
+			{#if $mb.mb_level >= tab.mbLv || !tab.mbLv}
+				<a
+					href={isBaseUrl + tabLink}
+					class="btn {tabLink === isCurrUrl ? 'variant-ghost-tertiary' : ''}"
+					on:click={resetTimer}
+					>{tab.name}
+				</a>
+			{/if}
 		{/each}
 	</div>
 </div>

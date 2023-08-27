@@ -7,9 +7,8 @@
 	const pageRouteId = String($page.route.id).split('/');
 	const baseUrl = pageRouteId[1];
 	const tabsArr = [
-		{ link: baseUrl, name: '회원정보' },
-		{ link: 'tab1', name: 'Tab1' },
-		{ link: 'tab2', name: 'Tab2' }
+		{ link: baseUrl, name: '회원정보', mbLv: 2 },
+		{ link: 'tradeLog', name: '거래내역', mbLv: 2 }
 	];
 </script>
 

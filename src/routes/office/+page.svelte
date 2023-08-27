@@ -3,6 +3,7 @@
 	import { instanceWithAuth } from '$lib/common/api';
 	import { dev } from '$app/environment';
 	import { mb, isLogin } from '$lib/store/mbstore';
+	import { siteHost, getCopyText } from '$lib/config';
 	import IconXi from '$lib/components/IconXi.svelte';
 	import { scale } from 'svelte/transition';
 	import AlertBox from '$lib/components/AlertBox.svelte';
@@ -59,6 +60,18 @@
 		if (dev) console.log('D:mb_info: ', mb_info);
 		if (dev) console.log('D:fld: ', mb_fld);
 	};
+	let isCopied = false;
+	const setCopy = () => {
+		getCopyText(siteHost + '/u/' + $mb.mb_id.substring(1));
+		isCopied = true;
+	};
+	// const setTelegram = async (fld: string, info: string) => {
+	// 	const params = {
+	// 		'data-telegram-login':'fynx_bot',
+	// 		'data-size':'medium'
+	// 		'data-auth-url':'/auth/telegram/'
+	// 	}
+	// }
 </script>
 
 <div class="wrap" in:scale={{ duration: 150 }}>
@@ -71,6 +84,16 @@
 	{/if}
 
 	<form>
+		<h4 class="text-center text-surface-500">
+			<IconXi iconName="mail" />
+			{$mb.mb_email}
+		</h4>
+		{#if $mb.mb_brkName}
+			<h4 class="text-center text-surface-500 mb-2">
+				<IconXi iconName="log" />
+				{$mb.mb_brkName}
+			</h4>
+		{/if}
 		<label class="label">
 			<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
 				<div class="input-group-shim"><IconXi iconName="profile-o" /></div>
@@ -105,6 +128,21 @@
 		</label>
 	</form>
 </div>
+{#if $mb.mb_level >= 4}
+	<div class="variant-ghost p-3">
+		<div class="flex justify-between">
+			<h3 id="ibLinkUrl" class="text-surface-400">{siteHost}/u/{$mb.mb_id.substring(1)}</h3>
+			<button class="btn variant-filled-primary btn-sm" on:click={setCopy}
+				><IconXi iconName="documents-o" /> 복사</button
+			>
+		</div>
+		{#if isCopied}
+			<span class="text-surface-400"
+				><IconXi iconName="link" /> 복사되었습니다. 원하시는 곳에 붙여넣기 하세요.</span
+			>
+		{/if}
+	</div>
+{/if}
 
 <style>
 	.wrap {

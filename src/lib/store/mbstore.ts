@@ -7,7 +7,9 @@ export const objMbInfo = {
 	mb_name: '',
 	mb_level: 0,
 	mb_point: 0,
-	mb_hp: ''
+	mb_hp: '',
+	mb_email: '',
+	mb_brkName: ''
 };
 export const mb = persisted('mb', objMbInfo);
 export const lvInfo: any[] = [];

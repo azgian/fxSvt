@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { resetTimer } from '$lib/config';
+	import { resetTimer, ibLv } from '$lib/config';
 	import { mb, isLogin } from '$lib/store/mbstore';
 	import IconXi from '$lib/components/IconXi.svelte';
 	const siteLogoSrc = '//' + $page.url.host + '/src/lib/images/logo_fynx.png';
@@ -8,7 +8,7 @@
 		{ slug: 'main', name: 'Main', icon: 'browser-text', lv: 2 },
 		{ slug: 'exch', name: 'Exchange', icon: 'renew', lv: 2 },
 		{ slug: 'office', name: 'Office', icon: 'file-check-o', lv: 2 },
-		{ slug: 'sys', name: 'Sys', icon: 'server', lv: 6 }
+		{ slug: 'sys', name: 'Sys', icon: 'server', lv: ibLv }
 	];
 </script>
 

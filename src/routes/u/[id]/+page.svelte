@@ -7,7 +7,7 @@
 	import LoginPage from '$lib/components/LoginPage.svelte';
 	import { scale } from 'svelte/transition';
 	import { recommendId } from '$lib/store/mbstore';
-	import { agentLv } from '$lib/config';
+	import { ibLv } from '$lib/config'; // 4
 	let member: any;
 	let isMember: boolean;
 	const mb_id = data.mb_id;
@@ -19,13 +19,13 @@
 		isMember = data?.data?.isMember;
 		member = data?.data?.member;
 		if (dev) console.log('D in [id] ', member);
-		if (isMember && member.mb_level >= agentLv) recommendId.set(member.mb_id);
+		if (isMember && member.mb_level >= ibLv) recommendId.set(member.mb_id);
 		else recommendId.set('');
 	};
 	getMember();
 </script>
 
-{#if isMember && member.mb_level >= agentLv}
+{#if isMember && member.mb_level >= ibLv}
 	<LoginPage agentId={$recommendId} />
 {:else}
 	<div class="mt-4" in:scale={{ duration: 150 }}>
