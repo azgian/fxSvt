@@ -2,6 +2,7 @@
 	import { page } from '$app/stores';
 	import { instance } from '$lib/common/api';
 	import { mb, isLogin } from '$lib/store/mbstore';
+	import { getEmailMatch } from '$lib/config';
 	import { dev } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import IconXi from '$lib/components/IconXi.svelte';
@@ -22,7 +23,6 @@
 		});
 	};
 
-	const regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
 	let isRegister = false;
 	let isReqCode = false;
 	let isSendCode = false;
@@ -30,7 +30,7 @@
 	let authCode: string;
 	let initCode: string;
 	const reqCode = async () => {
-		if (!email || email.match(regExp) == null) return false;
+		if (!getEmailMatch(email)) return false;
 		setDisabled();
 		isReqCode = true;
 		isSendCode = false;

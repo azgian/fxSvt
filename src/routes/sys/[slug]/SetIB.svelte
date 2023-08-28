@@ -12,10 +12,11 @@
 		};
 		const { data } = await instanceWithAuth.post('sys/member/Get_member_list/', params);
 		memberList = data.data;
+		console.log('memberList: ', memberList);
 	};
 	getMemberList(4);
 	const setMbBrk = async (mbId: string, newBrk: number, thisSel: any, mbBrk: number) => {
-		if (!confirm('회원등급 설정을 진행하시겠습니까?')) {
+		if (!confirm('회사선택 설정을 진행하시겠습니까?')) {
 			thisSel.value = mbBrk;
 			return false;
 		}
@@ -38,32 +39,20 @@
 		brkList = data.data;
 	};
 	getBrkList();
+	const setBrkFee = (mb_id: string, fee: string) => {
+		console.log('mb_id:', mb_id);
+		console.log('fee.length:', fee.length);
+	};
 </script>
 
 <div in:scale={{ duration: 150 }}>
-	<div class="flex mb-3">
-		<select
-			class="select"
-			id="selectLv"
-			bind:value={selectLv}
-			on:change={() => getMemberList(selectLv)}
-		>
-			<option value="0" selected>전체 등급</option>
-			{#each lvArray as lv}
-				{#if lv.id <= 7}
-					<option value={lv.id}>{lv.id}: {lv.name}</option>
-				{/if}
-			{/each}
-		</select>
-	</div>
-
 	<div class="table-container">
 		<table class="table table-hover">
 			<thead>
 				<tr>
 					<th>이름</th>
 					<th>정보</th>
-					<th>설정</th>
+					<th>IB 설정</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -74,6 +63,7 @@
 						{@const mbHp = row.mb_hp ? row.mb_hp : ''}
 						{@const mbBrk = row.mb_1 ? row.mb_1 : ''}
 						{@const mbBrkName = row.brk_name ? row.brk_name : ''}
+						{@const mbBrkFee = row.mb_2 ? row.mb_2 : ''}
 						<tr>
 							<td>
 								{row.mb_name}
@@ -83,10 +73,11 @@
 								</div>
 							</td>
 							<td class="info">
-								<p><IconXi iconName="park" />: {addCommas(row.mb_point)}</p>
-								<p><IconXi iconName="mail" />: {mbEmail}</p>
-								<p><IconXi iconName="mobile" />: {mbHp}</p>
-								<p><IconXi iconName="log" />: <span class="brkName">{mbBrkName}</span></p>
+								<p><IconXi iconName="park" /> {addCommas(row.mb_point)}</p>
+								<p><IconXi iconName="mail" /> {mbEmail}</p>
+								<p><IconXi iconName="mobile" /> {mbHp}</p>
+								<p><IconXi iconName="log" /> <span class="brkName">{mbBrkName}</span></p>
+								<p><IconXi iconName="log" /> <span class="brkFee">{mbBrkFee}</span> %</p>
 							</td>
 							<td>
 								<select
@@ -103,15 +94,23 @@
 										{/each}
 									{/if}
 								</select>
+
+								<div class="input-group input-group-divider grid-cols-[auto_1fr_auto] mt-3">
+									<input
+										type="number"
+										placeholder="수수료"
+										on:keyup={() => setBrkFee(row.mb_id, row.mb_2.value)}
+									/>
+								</div>
 							</td>
 						</tr>
 					{/each}
 				{/if}
 			</tbody>
 			<tfoot>
-				<tr>
+				<!-- <tr>
 					<th colspan="3"> 페이지 버튼 </th>
-				</tr>
+				</tr> -->
 			</tfoot>
 		</table>
 	</div>

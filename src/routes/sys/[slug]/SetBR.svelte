@@ -3,6 +3,7 @@
 	import { dev } from '$app/environment';
 	import { scale } from 'svelte/transition';
 	import IconXi from '$lib/components/IconXi.svelte';
+	import Button from '$lib/components/Button.svelte';
 	import { GoogleSpin } from 'svelte-loading-spinners';
 	let brkList: any[];
 	const getBrkList = async () => {
@@ -21,33 +22,42 @@
 	let brName: string;
 	let brAccount: string;
 	let brLogo: string;
+	let brFee: number;
 	let brkInfo: any[];
-	let btnSetBrkList: any;
 	let showSpinner = false;
+	let btnDisabledSetBrkList: any;
 	const setBrkList = async () => {
-		if (!brName || !brAccount) return false;
-		btnSetBrkList.disabled = showSpinner = true;
+		if (!brName || !brAccount || !brFee) return false;
+		btnDisabledSetBrkList = showSpinner = true;
 		const params = {
 			brId,
 			brName,
 			brLogo,
-			brAccount
+			brAccount,
+			brFee
 		};
 		const { data } = await instanceWithAuth.post('sys/member/Set_brk_list/', params);
 		brkInfo = data.data;
 		if (dev) {
 			console.log('brkInfo: ', brkInfo);
 		}
-		btnSetBrkList.disabled = showSpinner = false;
+		btnDisabledSetBrkList = showSpinner = false;
 		undoSetBrk();
 		getBrkList();
 	};
 	let newBrk = true;
-	const setBrkInfo = async (id: string, name: string, account: string, logo: string = '') => {
+	const setBrkInfo = async (
+		id: string,
+		name: string,
+		account: string,
+		fee: number,
+		logo: string = ''
+	) => {
 		brId = id;
 		brName = name;
 		brAccount = account;
 		brLogo = logo;
+		brFee = fee;
 		newBrk = false;
 	};
 	const undoSetBrk = () => {
@@ -55,6 +65,7 @@
 		brName = '';
 		brAccount = '';
 		brLogo = '';
+		brFee = null;
 		newBrk = true;
 	};
 	let deleteId: any[];
@@ -63,7 +74,6 @@
 		const params = {
 			brId
 		};
-		console.log('brId:', brId);
 		const { data } = await instanceWithAuth.post('sys/member/Delete_brk_list/', params);
 		deleteId = data.data;
 		if (dev) {
@@ -91,50 +101,44 @@
 			bind:value={brAccount}
 			required
 		/>
+		<input
+			class="input mb-2"
+			type="number"
+			placeholder="수수료를 입력하세요.(소숫점 한자리까지)"
+			bind:value={brFee}
+			required
+		/>
 		<input type="hidden" bind:value={brLogo} />
-		<!-- <label class="label mb-2">
-			<span>Logo</span>
-			<input
-				class="input"
-				name="logo"
-				type="file"
-				accept="image/png, image/jpeg"
-				bind:files={logo}
-				on:change={onChangeHandler}
-			/>
-		</label> -->
 		<div class="flex justify-between">
-			<!-- <div class="alert variant-ringed-surface grow me-2" id="logo-box">
-				<div class="alert-message">
-					<IconXi iconName="image-o" fontSize="2rem" addClass="text-surface-500" />
-				</div>
-			</div> -->
 			<div>
 				{#if !newBrk}
-					<button class="btn variant-filled-error" on:click={deleteBrk} type="button">
-						<span><IconXi iconName="trash" /></span>
-						<span>삭제</span>
-					</button>
+					<Button
+						addClass="variant-filled-error"
+						btnText="삭제"
+						iconNameS="trash"
+						iconNameAlt="trash"
+						onClick={deleteBrk}
+					/>
 				{/if}
 			</div>
 			<div>
-				<button class="btn variant-filled-surface me-2" on:click={undoSetBrk} type="button"
-					><span><IconXi iconName="undo" /></span> <span>취소</span></button
-				>
-				<button class="btn variant-filled-tertiary" on:click={setBrkList} bind:this={btnSetBrkList}>
-					{#if showSpinner}
-						<GoogleSpin size="1.5rem" />
-					{/if}
-					<span><IconXi iconName="upload" /></span>
-					<span
-						>BR
-						{#if newBrk}
-							등록
-						{:else}
-							수정
-						{/if}
-					</span>
-				</button>
+				<Button
+					addClass="variant-filled-surface me-2"
+					btnText="취소"
+					iconNameE="undo"
+					iconNameAlt="undo"
+					onClick={undoSetBrk}
+				/>
+				<Button
+					addClass="variant-filled-tertiary"
+					btnText="IB 등록"
+					iconNameE="upload"
+					iconNameAlt="upload"
+					showGs={showSpinner}
+					onClick={setBrkList}
+					btnType="submit"
+					btnDisabled={btnDisabledSetBrkList}
+				/>
 			</div>
 		</div>
 	</form>
@@ -144,9 +148,10 @@
 	<table class="table table-hover table-compact">
 		<thead>
 			<tr>
-				<th>로고</th>
+				<!-- <th>로고</th> -->
 				<th>회사명</th>
 				<th>계좌</th>
+				<th>수수료 (%)</th>
 				<th>Set</th>
 			</tr>
 		</thead>
@@ -154,16 +159,17 @@
 			{#if brkList}
 				{#each brkList as row, i}
 					<tr>
-						<td class="logo"><IconXi iconName="image-o" /></td>
+						<!-- <td class="logo"><IconXi iconName="image-o" /></td> -->
 						<td class="name">{row.name}</td>
 						<td class="account">{row.account}</td>
+						<td class="fee">{row.fee}</td>
 						<td class="table-cell-fit">
-							<button
-								class="btn-icon btn-icon-sm variant-filled-surface"
-								on:click={() => setBrkInfo(row.id, row.name, row.account)}
-							>
-								<IconXi iconName="cog" />
-							</button>
+							<Button
+								addClass="btn-icon btn-icon-sm variant-filled-surface"
+								iconNameE="cog"
+								iconNameAlt="cog"
+								onClick={() => setBrkInfo(row.id, row.name, row.account, row.fee)}
+							/>
 						</td>
 					</tr>
 				{/each}

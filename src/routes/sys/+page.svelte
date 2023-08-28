@@ -1,12 +1,12 @@
 <script async script lang="ts">
 	import IconXi from '$lib/components/IconXi.svelte';
+	import Button from '$lib/components/Button.svelte';
 	import { mb } from '$lib/store/mbstore';
-	import { addCommas, lvArray, lvArray2, lvNameElm, sys7Lv } from '$lib/config';
+	import { addCommas, lvArray, lvArray2, lvNameElm, sys7Lv, getEmailMatch } from '$lib/config';
 	import { instanceWithAuth } from '$lib/common/api';
 	import { dev } from '$app/environment';
 	import { scale } from 'svelte/transition';
 	import { toastStore } from '@skeletonlabs/skeleton';
-	import { GoogleSpin } from 'svelte-loading-spinners';
 	let memberList: any[];
 	let selectLv: number;
 	const isMblv = $mb.mb_level;
@@ -40,17 +40,17 @@
 		lvName.innerHTML = lvNameElm(Number(mb_level));
 	};
 	let showSetNewMb = false;
-	let showSpinner = false;
-	let btnSetNewMb: any;
+	let showSetNewMbGs = false;
 	let newMbEmail: string;
 	let newMbName: string;
+	let btnDisabledSetNewMb: any;
 	const setNewMb = async () => {
-		if (!(newMbEmail && newMbName)) return false;
+		if (!(newMbEmail && newMbName) || !getEmailMatch(newMbEmail)) return false;
 		const params = {
 			newMbEmail,
 			newMbName
 		};
-		btnSetNewMb.disabled = showSpinner = true;
+		btnDisabledSetNewMb = showSetNewMbGs = true;
 		const { data } = await instanceWithAuth.post('sys/member/Set_mbIB/', params);
 		const msg = data.data.msg;
 		const toastMsg = msg === 'exist' ? '회원가입된 이메일입니다.' : '회원가입되었습니다.';
@@ -60,12 +60,11 @@
 		};
 		toastStore.trigger(ToastSettings);
 		if (msg === 'success') {
-			showSetNewMb = false;
 			newMbEmail = '';
 			newMbName = '';
 			getMemberList(0);
 		}
-		btnSetNewMb.disabled = showSpinner = false;
+		btnDisabledSetNewMb = showSetNewMbGs = false;
 	};
 </script>
 
@@ -89,33 +88,29 @@
 						bind:value={newMbName}
 					/>
 					<div class="flex justify-end">
-						<button
-							class="btn variant-filled-primary btn-sm"
-							on:click={setNewMb}
-							bind:this={btnSetNewMb}
-						>
-							{#if showSpinner}
-								<GoogleSpin size="1.5rem" />
-							{/if}
-							신규회원 등록
-						</button>
+						<Button
+							addClass="variant-filled-primary btn-sm"
+							btnText="신규IB 등록"
+							iconNameE="user-plus"
+							iconNameAlt="user-plus"
+							showGs={showSetNewMbGs}
+							onClick={setNewMb}
+							btnType="submit"
+							btnDisabled={btnDisabledSetNewMb}
+						/>
 					</div>
 				</form>
 			{/if}
 		</div>
 		<div>
-			<button
-				class="btn variant-filled-surface btn-sm"
-				on:click={() => (showSetNewMb = !showSetNewMb)}
-			>
-				{#if showSetNewMb === false}
-					신규회원 등록
-					<IconXi iconName="user-plus" addClass="ms-2" />
-				{:else}
-					닫기
-					<IconXi iconName="close-thin" addClass="ms-2" />
-				{/if}
-			</button>
+			<Button
+				addClass="variant-filled-surface btn-sm"
+				btnText="신규IB 등록"
+				btnTextAlt="닫기"
+				iconNameE="user-plus"
+				iconNameAlt="close-thin"
+				onClick={() => (showSetNewMb = !showSetNewMb)}
+			/>
 		</div>
 	</div>
 {/if}
@@ -144,7 +139,7 @@
 					<th>이름</th>
 					<th>정보</th>
 					{#if $mb.mb_level >= sys7Lv}
-						<th>설정</th>
+						<th>회원등급 설정</th>
 					{/if}
 				</tr>
 			</thead>
@@ -164,11 +159,11 @@
 								</div>
 							</td>
 							<td class="info">
-								<p><IconXi iconName="park" />: {addCommas(row.mb_point)}</p>
-								<p><IconXi iconName="mail" />: {mbEmail}</p>
-								<p><IconXi iconName="mobile" />: {mbHp}</p>
+								<p><IconXi iconName="park" /> {addCommas(row.mb_point)}</p>
+								<p><IconXi iconName="mail" /> {mbEmail}</p>
+								<p><IconXi iconName="mobile" /> {mbHp}</p>
 								{#if mbBrkName}
-									<p><IconXi iconName="log" />: {mbBrkName}</p>
+									<p><IconXi iconName="log" /> {mbBrkName}</p>
 								{/if}
 							</td>
 							{#if $mb.mb_level >= sys7Lv}

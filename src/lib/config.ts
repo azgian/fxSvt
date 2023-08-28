@@ -69,19 +69,6 @@ export const getBrkInfo = async (id: number) => {
 	const { data } = await instanceWithAuth.post('sys/member/Get_brk_info', params);
 	return data.data;
 };
-export const setBtnSpinner = (thisBtn: any, showSpinner: any, act: boolean) => {
-	////현재 안됨. 나중에 손볼것
-	// thisBtn.disabled = act;
-	// showSpinner = act;
-	if (act) {
-		thisBtn.disabled = true;
-		showSpinner = true;
-	} else {
-		thisBtn.disabled = false;
-		showSpinner = false;
-	}
-	console.log('showSpinner: ', showSpinner);
-};
 export const getCopyText = (content: string) => {
 	navigator.clipboard
 		.writeText(content)
@@ -91,4 +78,9 @@ export const getCopyText = (content: string) => {
 		.catch((err) => {
 			console.error('텍스트 복사 실패:', err);
 		});
+};
+export const getEmailMatch = (email: string) => {
+	const regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
+	if (!email || email.match(regExp) == null) return false;
+	else return true;
 };

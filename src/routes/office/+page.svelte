@@ -5,6 +5,7 @@
 	import { mb, isLogin } from '$lib/store/mbstore';
 	import { siteHost, getCopyText } from '$lib/config';
 	import IconXi from '$lib/components/IconXi.svelte';
+	import Button from '$lib/components/Button.svelte';
 	import { scale } from 'svelte/transition';
 	import AlertBox from '$lib/components/AlertBox.svelte';
 	if (!$isLogin) goto('/');
@@ -98,9 +99,14 @@
 			<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
 				<div class="input-group-shim"><IconXi iconName="profile-o" /></div>
 				<input type="text" bind:value={mbName} on:keyup={() => (disabledMbName = false)} />
-				<button class="variant-filled-secondary" on:click={setMbName} disabled={disabledMbName}
-					>회원이름 설정</button
-				>
+				<Button
+					btnClass=""
+					addClass="variant-filled-secondary"
+					btnText="회원이름 설정"
+					btnDisabled={disabledMbName}
+					onClick={setMbName}
+					btnType="submit"
+				/>
 			</div>
 			{#if !$mb.mb_name}
 				<span class="text-warning-300"><IconXi iconName="pen-o" /> 회원이름을 설정하세요</span>
@@ -118,9 +124,14 @@
 					placeholder="숫자만 입력하세요."
 					on:keyup={() => (disabledMbHp = false)}
 				/>
-				<button class="variant-filled-secondary" on:click={setMbHp} disabled={disabledMbHp}
-					>전화번호 설정</button
-				>
+				<Button
+					btnClass=""
+					addClass="variant-filled-secondary"
+					btnText="전화번호 설정"
+					btnDisabled={disabledMbHp}
+					onClick={setMbHp}
+					btnType="submit"
+				/>
 			</div>
 			{#if !$mb.mb_hp}
 				<span class="text-warning-300"><IconXi iconName="pen-o" /> 전화번호를 설정하세요</span>
@@ -132,9 +143,12 @@
 	<div class="variant-ghost p-3">
 		<div class="flex justify-between">
 			<h3 id="ibLinkUrl" class="text-surface-400">{siteHost}/u/{$mb.mb_id.substring(1)}</h3>
-			<button class="btn variant-filled-primary btn-sm" on:click={setCopy}
-				><IconXi iconName="documents-o" /> 복사</button
-			>
+			<Button
+				addClass="variant-filled-primary btn-sm"
+				btnText="복사"
+				iconNameS="documents-o"
+				onClick={setCopy}
+			/>
 		</div>
 		{#if isCopied}
 			<span class="text-surface-400"
