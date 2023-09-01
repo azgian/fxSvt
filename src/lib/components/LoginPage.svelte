@@ -6,7 +6,9 @@
 	import { dev } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import IconXi from '$lib/components/IconXi.svelte';
+	import Button from '$lib/components/Button.svelte';
 	import AlertBox from '$lib/components/AlertBox.svelte';
+	import SpinnerBox from '$lib/components/SpinnerBox.svelte';
 	import { scale } from 'svelte/transition';
 	import { popup } from '@skeletonlabs/skeleton';
 	import type { PopupSettings } from '@skeletonlabs/skeleton';
@@ -16,35 +18,28 @@
 		target: 'popupInfo',
 		placement: 'top'
 	};
-	const setDisabled = (stat = true) => {
-		const elms = document.querySelectorAll('.setDisabled');
-		elms.forEach((elm) => {
-			stat ? elm.setAttribute('disabled', 'disabled') : elm.removeAttribute('disabled');
-		});
-	};
-
 	let isRegister = false;
-	let isReqCode = false;
 	let isSendCode = false;
+	let showReqCodeGs = false;
+	let btnDisabledReqCode = false;
+	let disabledInputEmail = false;
 	let email: string;
 	let authCode: string;
 	let initCode: string;
 	const reqCode = async () => {
 		if (!getEmailMatch(email)) return false;
-		setDisabled();
-		isReqCode = true;
+		disabledInputEmail = btnDisabledReqCode = showReqCodeGs = true;
 		isSendCode = false;
 		const params = {
 			email,
 			isRegister
 		};
 		const { data } = await instance.post('member/auth/Req_code', params);
-		isReqCode = false;
 		authCode = data?.data?.auth_code;
 		if (dev) console.log('D ', authCode);
+		showReqCodeGs = false;
 		if (authCode !== 'non') initCode = authCode.substr(0, 2);
-		else setDisabled(false);
-		//jwt 토큰 받아와 저장
+		else disabledInputEmail = btnDisabledReqCode = false;
 	};
 
 	let getAuth = false;
@@ -79,22 +74,22 @@
 			}
 		}
 	};
-	let btnTxt = '로그인';
-	let btnClass = 'variant-filled-primary';
+	let altTxt = '로그인';
+	let altClass = 'variant-filled-primary';
 	const chkRegister = (event: any) => {
 		if (event.target.checked) {
-			btnTxt = '회원가입';
-			btnClass = 'variant-filled-warning';
+			altTxt = '회원가입';
+			altClass = 'variant-filled-warning';
 		} else {
-			btnTxt = '로그인';
-			btnClass = 'variant-filled-primary';
+			altTxt = '로그인';
+			altClass = 'variant-filled-primary';
 		}
 		setRefresh();
 	};
 	const setRefresh = () => {
 		authCode = '';
 		numberCode = '';
-		setDisabled(false);
+		disabledInputEmail = btnDisabledReqCode = showReqCodeGs = false;
 	};
 </script>
 
@@ -126,43 +121,53 @@
 			on:change={setRefresh}
 			type="email"
 			placeholder="이메일을 입력하세요."
+			disabled={disabledInputEmail}
 			required
 		/>
 		<div class="flex justify-end mt-4">
-			<button class="btn {btnClass} setDisabled" on:click={reqCode}>
-				<span><IconXi iconName="mail" /></span>
-				<span>{btnTxt} 인증코드 받기</span>
-			</button>
+			<Button
+				addClass={altClass}
+				btnText="{altTxt} 인증코드 받기"
+				iconNameS="mail"
+				iconNameAlt="mail"
+				onClick={reqCode}
+				showGs={showReqCodeGs}
+				btnDisabled={btnDisabledReqCode}
+				btnType="submit"
+			/>
 		</div>
 	</form>
-
-	{#if isReqCode}
-		<div class="pt-6 text-center">
-			<IconXi iconName="spinner-3" fontSize="2rem" addClass="xi-spin" />
-		</div>
-	{/if}
 	{#if authCode}
 		<div class="mt-4" in:scale={{ duration: 150 }}>
 			{#if authCode !== 'non'}
 				<span class="text-surface-500">이메일로 받은 인증코드를 입력하세요.</span>
 				<form>
-					<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
+					<div class="input-group input-group-divider grid-cols-3">
 						<input bind:value={initCode} readonly />
 						<input
+							class="col-span-2"
 							bind:value={numberCode}
 							type="number"
-							placeholder="인증코드 (숫자만 입력하세요)"
+							placeholder="인증코드 (숫자만 입력)"
 							required
 						/>
 					</div>
 					<div class="flex justify-between mt-4">
-						<button class="btn variant-filled-surface" type="button" on:click={setRefresh}
-							><span><IconXi iconName="refresh" /></span><span>인증초기화</span></button
-						>
-						<button class="btn variant-filled-secondary" on:click={sendCode}>
-							<span><IconXi iconName="check-circle" /></span>
-							<span>인증코드 확인</span>
-						</button>
+						<Button
+							addClass="variant-filled-surface"
+							btnText="초기화"
+							iconNameS="refresh"
+							iconNameAlt="refresh"
+							onClick={setRefresh}
+						/>
+						<Button
+							addClass="variant-filled-secondary"
+							btnText="인증코드 확인"
+							iconNameS="check-circle"
+							iconNameAlt="check-circle"
+							onClick={sendCode}
+							btnType="submit"
+						/>
 					</div>
 				</form>
 			{:else}

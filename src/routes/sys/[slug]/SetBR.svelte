@@ -5,6 +5,7 @@
 	import IconXi from '$lib/components/IconXi.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { GoogleSpin } from 'svelte-loading-spinners';
+	import { scrollToId } from '$lib/config';
 	let brkList: any[];
 	const getBrkList = async () => {
 		const { data } = await instanceWithAuth.post('sys/member/Get_brk_list/');
@@ -26,6 +27,8 @@
 	let brkInfo: any[];
 	let showSpinner = false;
 	let btnDisabledSetBrkList: any;
+	let altBtnText = '신규BR 등록';
+	let altBtnColor = 'variant-filled-tertiary';
 	const setBrkList = async () => {
 		if (!brName || !brAccount || !brFee) return false;
 		btnDisabledSetBrkList = showSpinner = true;
@@ -59,6 +62,9 @@
 		brLogo = logo;
 		brFee = fee;
 		newBrk = false;
+		scrollToId('container-box');
+		altBtnText = 'BR정보 수정';
+		altBtnColor = 'variant-filled-warning';
 	};
 	const undoSetBrk = () => {
 		brId = '';
@@ -67,6 +73,8 @@
 		brLogo = '';
 		brFee = null;
 		newBrk = true;
+		altBtnText = '신규BR 등록';
+		altBtnColor = 'variant-filled-tertiary';
 	};
 	let deleteId: any[];
 	const deleteBrk = async () => {
@@ -87,24 +95,12 @@
 <div class="wrap-box" in:scale={{ duration: 150 }}>
 	<form>
 		<input type="hidden" bind:value={brId} />
-		<input
-			class="input mb-2"
-			type="text"
-			placeholder="회사명을 입력하세요."
-			bind:value={brName}
-			required
-		/>
-		<input
-			class="input mb-2"
-			type="text"
-			placeholder="계좌를 입력하세요."
-			bind:value={brAccount}
-			required
-		/>
+		<input class="input mb-2" type="text" placeholder="회사명" bind:value={brName} required />
+		<input class="input mb-2" type="text" placeholder="계좌" bind:value={brAccount} required />
 		<input
 			class="input mb-2"
 			type="number"
-			placeholder="수수료를 입력하세요.(소숫점 한자리까지)"
+			placeholder="수수료 (소숫점 한자리까지)"
 			bind:value={brFee}
 			required
 		/>
@@ -113,8 +109,7 @@
 			<div>
 				{#if !newBrk}
 					<Button
-						addClass="variant-filled-error"
-						btnText="삭제"
+						addClass="variant-filled-error btn-icon btn-icon-sm"
 						iconNameS="trash"
 						iconNameAlt="trash"
 						onClick={deleteBrk}
@@ -123,15 +118,14 @@
 			</div>
 			<div>
 				<Button
-					addClass="variant-filled-surface me-2"
-					btnText="취소"
+					addClass="variant-filled-surface me-2 btn-icon btn-icon-sm"
 					iconNameE="undo"
 					iconNameAlt="undo"
 					onClick={undoSetBrk}
 				/>
 				<Button
-					addClass="variant-filled-tertiary"
-					btnText="IB 등록"
+					addClass="{altBtnColor} btn-sm"
+					btnText={altBtnText}
 					iconNameE="upload"
 					iconNameAlt="upload"
 					showGs={showSpinner}
@@ -149,9 +143,9 @@
 		<thead>
 			<tr>
 				<!-- <th>로고</th> -->
-				<th>회사명</th>
-				<th>계좌</th>
-				<th>수수료 (%)</th>
+				<th>Name</th>
+				<th>Account</th>
+				<th>Fee</th>
 				<th>Set</th>
 			</tr>
 		</thead>

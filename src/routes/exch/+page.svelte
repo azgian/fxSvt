@@ -1,7 +1,4 @@
 <script lang="ts">
-	// import type { PageData } from './$types';
-	// export let data: PageData;
-	// import { page } from '$app/stores';
 	import { scale } from 'svelte/transition';
 </script>
 
@@ -23,5 +20,6 @@
 	}
 	input {
 		margin-bottom: 10px;
+		text-align: center;
 	}
 </style>

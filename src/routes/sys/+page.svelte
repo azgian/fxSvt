@@ -1,21 +1,19 @@
 <script async script lang="ts">
 	import IconXi from '$lib/components/IconXi.svelte';
-	import Button from '$lib/components/Button.svelte';
 	import { mb } from '$lib/store/mbstore';
-	import { addCommas, lvArray, lvArray2, lvNameElm, sys7Lv, getEmailMatch } from '$lib/config';
+	import { addCommas, lvArray, lvArray2, lvNameElm, sys7Lv, ibLv } from '$lib/config';
 	import { instanceWithAuth } from '$lib/common/api';
 	import { dev } from '$app/environment';
 	import { scale } from 'svelte/transition';
-	import { toastStore } from '@skeletonlabs/skeleton';
 	let memberList: any[];
 	let selectLv: number;
-	const isMblv = $mb.mb_level;
-	const mbId = $mb.mb_id;
-	const getMemberList = async (lv: number) => {
+	let mbLv = 0;
+	let isIB = $mb.mb_level === ibLv ? $mb.mb_id : '';
+	const getMemberList = async (mbLv: number, isIB = '', schName = '') => {
 		const params = {
-			mb_level: lv,
-			isMblv,
-			mbId
+			mbLv,
+			isIB,
+			schName
 		};
 		const { data } = await instanceWithAuth.post('sys/member/Get_member_list/', params);
 		memberList = data.data;
@@ -23,7 +21,7 @@
 			console.log('memberList: ', memberList);
 		}
 	};
-	getMemberList(0);
+	getMemberList(mbLv, isIB);
 	const setMbLv = async (mbId: string, newLv: number, thisSel: any, mbLv: number) => {
 		if (!confirm('회원등급 설정을 진행하시겠습니까?')) {
 			thisSel.value = mbLv;
@@ -39,107 +37,50 @@
 		const lvName = thisSel.closest('tr').querySelector('.lvName');
 		lvName.innerHTML = lvNameElm(Number(mb_level));
 	};
-	let showSetNewMb = false;
-	let showSetNewMbGs = false;
-	let newMbEmail: string;
-	let newMbName: string;
-	let btnDisabledSetNewMb: any;
-	const setNewMb = async () => {
-		if (!(newMbEmail && newMbName) || !getEmailMatch(newMbEmail)) return false;
-		const params = {
-			newMbEmail,
-			newMbName
-		};
-		btnDisabledSetNewMb = showSetNewMbGs = true;
-		const { data } = await instanceWithAuth.post('sys/member/Set_mbIB/', params);
-		const msg = data.data.msg;
-		const toastMsg = msg === 'exist' ? '회원가입된 이메일입니다.' : '회원가입되었습니다.';
-		const ToastSettings = {
-			message: toastMsg,
-			timeout: 3000
-		};
-		toastStore.trigger(ToastSettings);
-		if (msg === 'success') {
-			newMbEmail = '';
-			newMbName = '';
-			getMemberList(0);
-		}
-		btnDisabledSetNewMb = showSetNewMbGs = false;
+	let schMbName: string;
+	const searchMbName = async () => {
+		getMemberList(selectLv, '', schMbName);
 	};
 </script>
 
-{#if $mb.mb_level >= sys7Lv}
-	<div class="flex justify-between mt-5">
-		<div class="p-2">
-			{#if showSetNewMb}
-				<form id="newMbForm">
-					<input
-						type="email"
-						class="input mb-2"
-						placeholder="이메일"
-						required
-						bind:value={newMbEmail}
-					/>
-					<input
-						type="text"
-						class="input mb-2"
-						placeholder="이름"
-						required
-						bind:value={newMbName}
-					/>
-					<div class="flex justify-end">
-						<Button
-							addClass="variant-filled-primary btn-sm"
-							btnText="신규IB 등록"
-							iconNameE="user-plus"
-							iconNameAlt="user-plus"
-							showGs={showSetNewMbGs}
-							onClick={setNewMb}
-							btnType="submit"
-							btnDisabled={btnDisabledSetNewMb}
-						/>
-					</div>
-				</form>
-			{/if}
-		</div>
-		<div>
-			<Button
-				addClass="variant-filled-surface btn-sm"
-				btnText="신규IB 등록"
-				btnTextAlt="닫기"
-				iconNameE="user-plus"
-				iconNameAlt="close-thin"
-				onClick={() => (showSetNewMb = !showSetNewMb)}
-			/>
-		</div>
-	</div>
-{/if}
 <div in:scale={{ duration: 150 }}>
 	{#if $mb.mb_level >= sys7Lv}
 		<div class="flex mb-3">
-			<select
-				class="select"
-				id="selectLv"
-				bind:value={selectLv}
-				on:change={() => getMemberList(selectLv)}
-			>
-				<option value="0" selected>전체 등급</option>
-				{#each lvArray as lv}
-					{#if lv.id <= 7}
-						<option value={lv.id}>{lv.id}: {lv.name}</option>
-					{/if}
-				{/each}
-			</select>
+			<div>
+				<select
+					class="select"
+					id="selectLv"
+					bind:value={selectLv}
+					on:change={() => getMemberList(selectLv, '', schMbName)}
+				>
+					<option value="0" selected>전체 등급</option>
+					{#each lvArray as lv}
+						{#if lv.id <= 7}
+							<option value={lv.id}>{lv.id}: {lv.name}</option>
+						{/if}
+					{/each}
+				</select>
+			</div>
+			<div class="ms-2">
+				<input
+					id="inputSchMbName"
+					class="input text-center"
+					placeholder="이름 검색"
+					type="text"
+					bind:value={schMbName}
+					on:keyup={searchMbName}
+				/>
+			</div>
 		</div>
 	{/if}
 	<div class="table-container">
 		<table class="table table-hover">
 			<thead>
 				<tr>
-					<th>이름</th>
-					<th>정보</th>
+					<th>Name</th>
+					<th>Info</th>
 					{#if $mb.mb_level >= sys7Lv}
-						<th>회원등급 설정</th>
+						<th>Set</th>
 					{/if}
 				</tr>
 			</thead>
@@ -162,8 +103,16 @@
 								<p><IconXi iconName="park" /> {addCommas(row.mb_point)}</p>
 								<p><IconXi iconName="mail" /> {mbEmail}</p>
 								<p><IconXi iconName="mobile" /> {mbHp}</p>
-								{#if mbBrkName}
-									<p><IconXi iconName="log" /> {mbBrkName}</p>
+								{#if row.mb_level >= ibLv}
+									<p>
+										<IconXi iconName="external-link" />
+										{#if mbBrkName}
+											{mbBrkName}
+											{#if row.mb_2}
+												({row.mb_2}%)
+											{/if}
+										{/if}
+									</p>
 								{/if}
 							</td>
 							{#if $mb.mb_level >= sys7Lv}
@@ -195,9 +144,6 @@
 </div>
 
 <style>
-	#newMbForm input {
-		text-align: center;
-	}
 	th,
 	td {
 		text-align: center;
@@ -206,7 +152,8 @@
 	.info {
 		text-align: start;
 	}
-	#selectLv {
-		width: 150px;
+	#selectLv,
+	#inputSchMbName {
+		width: 130px;
 	}
 </style>

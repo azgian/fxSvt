@@ -3,7 +3,7 @@
 	import { instanceWithAuth } from '$lib/common/api';
 	import { dev } from '$app/environment';
 	import { mb, isLogin } from '$lib/store/mbstore';
-	import { siteHost, getCopyText } from '$lib/config';
+	import { siteHost, getCopyText, ibLv } from '$lib/config';
 	import IconXi from '$lib/components/IconXi.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { scale } from 'svelte/transition';
@@ -89,20 +89,30 @@
 			<IconXi iconName="mail" />
 			{$mb.mb_email}
 		</h4>
-		{#if $mb.mb_brkName}
-			<h4 class="text-center text-surface-500 mb-2">
-				<IconXi iconName="log" />
+		{#if $mb.mb_level > ibLv && $mb.mb_brkName}
+			<h4 class="text-center text-surface-500 mt-1">
+				<IconXi iconName="external-link" />
 				{$mb.mb_brkName}
+				{#if $mb.mb_2}
+					<small>(수수료: {$mb.mb_2} %)</small>
+				{/if}
 			</h4>
 		{/if}
-		<label class="label">
-			<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
-				<div class="input-group-shim"><IconXi iconName="profile-o" /></div>
-				<input type="text" bind:value={mbName} on:keyup={() => (disabledMbName = false)} />
+		<label class="label mt-2">
+			<div class="input-group input-group-divider grid-cols-5">
+				<div class="col-span-1"><IconXi iconName="profile-o" /></div>
+				<input
+					type="text"
+					class="col-span-3"
+					placeholder="이름"
+					bind:value={mbName}
+					on:keyup={() => (disabledMbName = false)}
+				/>
 				<Button
 					btnClass=""
-					addClass="variant-filled-secondary"
-					btnText="회원이름 설정"
+					addClass="variant-filled-secondary col-span-1"
+					iconNameS="pen"
+					iconNameAlt="pen"
 					btnDisabled={disabledMbName}
 					onClick={setMbName}
 					btnType="submit"
@@ -116,18 +126,20 @@
 
 	<form>
 		<label class="label">
-			<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
-				<div class="input-group-shim"><IconXi iconName="mobile" /></div>
+			<div class="input-group input-group-divider grid-cols-5">
+				<div class="col-span-1"><IconXi iconName="mobile" /></div>
 				<input
 					type="number"
+					class="col-span-3"
 					bind:value={mbHp}
-					placeholder="숫자만 입력하세요."
+					placeholder="전화번호(숫자만 입력)"
 					on:keyup={() => (disabledMbHp = false)}
 				/>
 				<Button
 					btnClass=""
-					addClass="variant-filled-secondary"
-					btnText="전화번호 설정"
+					addClass="variant-filled-secondary col-span-1"
+					iconNameS="pen"
+					iconNameAlt="pen"
 					btnDisabled={disabledMbHp}
 					onClick={setMbHp}
 					btnType="submit"
@@ -165,7 +177,7 @@
 		width: 90%;
 	}
 	form {
-		margin-bottom: 15px;
+		margin-bottom: 10px;
 	}
 	.label span {
 		padding-top: 5px;

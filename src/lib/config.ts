@@ -84,3 +84,16 @@ export const getEmailMatch = (email: string) => {
 	if (!email || email.match(regExp) == null) return false;
 	else return true;
 };
+export const setBtnGS = (disabledBtn: any, showGs: any, stat: boolean) => {
+	disabledBtn = showGs = stat;
+};
+export const scrollToId = (elmId: string) => {
+	const element = document.getElementById(elmId);
+	if (element) {
+		element.scrollIntoView({
+			behavior: 'smooth',
+			block: 'start',
+			inline: 'nearest'
+		});
+	}
+};
