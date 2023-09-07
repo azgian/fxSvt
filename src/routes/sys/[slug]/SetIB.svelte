@@ -119,19 +119,19 @@
 				placeholder="수수료 (소수점 1자리까지)"
 				bind:value={ibFee}
 			/>
-			<div class="flex justify-between">
-				<div>
-					<SlideToggle name="slide" bind:checked={ibActive} />
-				</div>
+			<div class="flex justify-between mt-1">
 				<div>
 					<Button
-						addClass="variant-filled-surface me-2 btn-icon btn-icon-sm"
+						addClass="variant-filled-surface btn-icon btn-icon-sm"
 						iconNameE="undo"
 						iconNameAlt="undo"
 						onClick={undoSetIB}
 					/>
+				</div>
+				<div>
+					<SlideToggle name="slide" bind:checked={ibActive} />
 					<Button
-						addClass="{altBtnColor} btn-sm"
+						addClass={altBtnColor}
 						btnText={altBtnText}
 						iconNameE="user-plus"
 						iconNameAlt="user-plus"

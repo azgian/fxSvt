@@ -77,19 +77,19 @@
 				bind:value={brkFee}
 				required
 			/>
-			<div class="flex justify-between">
-				<div>
-					<SlideToggle name="slide" bind:checked={brkActive} />
-				</div>
+			<div class="flex justify-between mt-1">
 				<div>
 					<Button
-						addClass="variant-filled-surface me-2 btn-icon btn-icon-sm"
+						addClass="variant-filled-surface btn-icon btn-icon-sm"
 						iconNameE="undo"
 						iconNameAlt="undo"
 						onClick={undoSetBrk}
 					/>
+				</div>
+				<div>
+					<SlideToggle name="slide" bind:checked={brkActive} />
 					<Button
-						addClass="{altBtnColor} btn-sm"
+						addClass={altBtnColor}
 						btnText={altBtnText}
 						iconNameE="upload"
 						iconNameAlt="upload"
@@ -103,8 +103,8 @@
 		</form>
 	</div>
 
-	<div class="table-container mt-5" in:scale={{ duration: 150 }}>
-		<table class="table table-hover table-compact">
+	<div class="table-container">
+		<table class="table table-hover">
 			<thead>
 				<tr>
 					<th />
