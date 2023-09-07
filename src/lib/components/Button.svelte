@@ -12,8 +12,8 @@
 	export let iconNameAlt: string = '';
 	export let onClick: any;
 	export let showAlt = false;
+	export let btnDisabled = false;
 	export let btnType: any = 'button';
-	export let btnDisabled: any = false;
 	export const actAlt = () => {
 		if (btnTextAlt) showAlt = !showAlt;
 	};

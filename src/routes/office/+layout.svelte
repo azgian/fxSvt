@@ -2,13 +2,15 @@
 	import { page } from '$app/stores';
 	import TabMenuBox from '$lib/components/TabMenuBox.svelte';
 	import { goto } from '$app/navigation';
-	import { isLogin } from '$lib/store/mbstore';
-	// if (!$isLogin) goto('/');
+	import { mb, isLogin } from '$lib/store/mbstore';
+	import { sys7Lv } from '$lib/config.js';
+	if (!$isLogin) goto('/');
 	const pageRouteId = String($page.route.id).split('/');
 	const baseUrl = pageRouteId[1];
+	const slugName = $mb.mb_level >= sys7Lv ? '회사정보' : '회원정보';
 	const tabsArr = [
-		{ link: baseUrl, name: '회원정보', mbLv: 2 },
-		{ link: 'tradeLog', name: '거래내역', mbLv: 2 }
+		{ link: baseUrl, name: '신청내역', mbLv: 2 },
+		{ link: 'info', name: slugName, mbLv: 2 }
 	];
 </script>
 

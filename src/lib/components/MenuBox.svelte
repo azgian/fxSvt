@@ -3,7 +3,6 @@
 	import { resetTimer, ibLv } from '$lib/config';
 	import { mb, isLogin } from '$lib/store/mbstore';
 	import IconXi from '$lib/components/IconXi.svelte';
-	const siteLogoSrc = '//' + $page.url.host + '/src/lib/images/logo_fynx.png';
 	const menuList = [
 		{ slug: 'main', name: 'Main', icon: 'browser-text', lv: 2 },
 		{ slug: 'exch', name: 'Exchange', icon: 'renew', lv: 2 },

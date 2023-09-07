@@ -7,13 +7,13 @@
 	import { scale } from 'svelte/transition';
 	let memberList: any[];
 	let selectLv: number;
-	let mbLv = 0;
-	let isIB = $mb.mb_level === ibLv ? $mb.mb_id : '';
-	const getMemberList = async (mbLv: number, isIB = '', schName = '') => {
+	let mbLevel: number;
+	let ibId = Number($mb.mb_level) === ibLv ? $mb.mb_id : ''; //IB 등급이면 본인 추천회원만 리스트업
+	const getMemberList = async (mbLevel: number, ibId: string, schName = '') => {
 		const params = {
-			mbLv,
-			isIB,
-			schName
+			mbLevel,
+			ibId,
+			schName ///이름 검색
 		};
 		const { data } = await instanceWithAuth.post('sys/member/Get_member_list/', params);
 		memberList = data.data;
@@ -21,67 +21,65 @@
 			console.log('memberList: ', memberList);
 		}
 	};
-	getMemberList(mbLv, isIB);
-	const setMbLv = async (mbId: string, newLv: number, thisSel: any, mbLv: number) => {
+	getMemberList(0, ibId);
+	const setMbLv = async (mb_id: string, newLevel: number, thisSel: any, mbLevel: number) => {
 		if (!confirm('회원등급 설정을 진행하시겠습니까?')) {
-			thisSel.value = mbLv;
+			thisSel.value = mbLevel;
 			return false;
 		}
 		const params = {
-			mbId,
+			mb_id,
 			fld: 'mb_level',
-			info: newLv
+			val: newLevel
 		};
 		const { data } = await instanceWithAuth.post('member/auth/Set_mb_info', params);
-		const mb_level = data.data.mb_info;
+		const mb_level = data.data.mb_val;
 		const lvName = thisSel.closest('tr').querySelector('.lvName');
 		lvName.innerHTML = lvNameElm(Number(mb_level));
 	};
 	let schMbName: string;
 	const searchMbName = async () => {
-		getMemberList(selectLv, '', schMbName);
+		getMemberList(selectLv, ibId, schMbName);
 	};
 </script>
 
 <div in:scale={{ duration: 150 }}>
-	{#if $mb.mb_level >= sys7Lv}
-		<div class="flex mb-3">
-			<div>
+	<div class="flex mb-3">
+		{#if $mb.mb_level >= sys7Lv}
+			<div class="me-2">
 				<select
 					class="select"
 					id="selectLv"
 					bind:value={selectLv}
-					on:change={() => getMemberList(selectLv, '', schMbName)}
+					on:change={() => getMemberList(selectLv, ibId, schMbName)}
 				>
 					<option value="0" selected>전체 등급</option>
 					{#each lvArray as lv}
-						{#if lv.id <= 7}
+						{#if lv.id <= 2}
 							<option value={lv.id}>{lv.id}: {lv.name}</option>
 						{/if}
 					{/each}
 				</select>
 			</div>
-			<div class="ms-2">
-				<input
-					id="inputSchMbName"
-					class="input text-center"
-					placeholder="이름 검색"
-					type="text"
-					bind:value={schMbName}
-					on:keyup={searchMbName}
-				/>
-			</div>
+		{/if}
+		<div>
+			<input
+				id="inputSchMbName"
+				class="input text-center"
+				placeholder="이름 검색"
+				type="text"
+				bind:value={schMbName}
+				on:keyup={searchMbName}
+			/>
 		</div>
-	{/if}
+	</div>
 	<div class="table-container">
 		<table class="table table-hover">
 			<thead>
 				<tr>
 					<th>Name</th>
 					<th>Info</th>
-					{#if $mb.mb_level >= sys7Lv}
-						<th>Set</th>
-					{/if}
+					<th>Set</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -108,28 +106,23 @@
 										<IconXi iconName="external-link" />
 										{#if mbBrkName}
 											{mbBrkName}
-											{#if row.mb_2}
-												({row.mb_2}%)
-											{/if}
 										{/if}
 									</p>
 								{/if}
 							</td>
-							{#if $mb.mb_level >= sys7Lv}
-								<td>
-									<select
-										class="select"
-										on:change={() => setMbLv(row.mb_id, row.ref.value, row.ref, lvNum)}
-										bind:this={row.ref}
-									>
-										{#each lvArray2 as lv}
-											<option value={lv.id} selected={lvNum === lv.id}>
-												{lv.id}: {lv.name}
-											</option>
-										{/each}
-									</select>
-								</td>
-							{/if}
+							<td>
+								<select
+									class="select"
+									on:change={() => setMbLv(row.mb_id, row.ref.value, row.ref, lvNum)}
+									bind:this={row.ref}
+								>
+									{#each lvArray2 as lv}
+										<option value={lv.id} selected={lvNum === lv.id}>
+											{lv.id}: {lv.name}
+										</option>
+									{/each}
+								</select>
+							</td>
 						</tr>
 					{/each}
 				{/if}

@@ -1,135 +1,128 @@
 <script async script lang="ts">
 	import IconXi from '$lib/components/IconXi.svelte';
 	import Button from '$lib/components/Button.svelte';
-	import { addCommas, lvNameElm, getBrkInfo, getEmailMatch, scrollToId } from '$lib/config';
+	import {
+		addCommas,
+		lvNameElm,
+		getEmailMatch,
+		writableBrkList,
+		setWritableBrkList,
+		scrollToId,
+		sys7Lv,
+		changeClass
+	} from '$lib/config';
 	import { instanceWithAuth } from '$lib/common/api';
 	import { scale } from 'svelte/transition';
-	import { toastStore } from '@skeletonlabs/skeleton';
+	import { toastStore, SlideToggle } from '@skeletonlabs/skeleton';
 	import { goto } from '$app/navigation';
-	let memberList: any[];
-	const getMemberList = async (lv: number) => {
+	import { mb } from '$lib/store/mbstore';
+	if ($mb.mb_level < sys7Lv) goto('/');
+	let ibList: any[];
+	const getIbList = async () => {
 		const params = {
-			mb_level: lv
+			mbLevel: 4
 		};
 		const { data } = await instanceWithAuth.post('sys/member/Get_member_list/', params);
-		memberList = data.data;
-		console.log('memberList: ', memberList);
+		ibList = data.data;
 	};
-	getMemberList(4);
-	const setMbBrk = async (mbId: string, newBrk: number, thisSel: any, mbBrk: number) => {
-		if (!confirm('회사선택 설정을 진행하시겠습니까?')) {
-			thisSel.value = mbBrk;
-			return false;
-		}
-		const params = {
-			mbId,
-			fld: 'mb_1',
-			info: newBrk
-		};
-		const { data } = await instanceWithAuth.post('member/auth/Set_mb_info', params);
-		const mbInfo = data.data;
-		const brkNameElm = thisSel.closest('tr').querySelector('.brkName');
-		const brkInfo = await getBrkInfo(mbInfo.mb_1);
-		brkNameElm.innerHTML = brkInfo.name;
-	};
-	let brkList: any[];
-	const getBrkList = async () => {
-		const { data } = await instanceWithAuth.post('sys/member/Get_brk_list');
-		brkList = data.data;
-	};
-	getBrkList();
-	const setBrkFee = (mb_id: string, fee: string) => {
-		console.log('mb_id:', mb_id);
-		console.log('fee.length:', fee.length);
-	};
-	let mbId: string;
-	let mbEmail: string;
-	let mbName: string;
-	let mbBrkId: number;
-	let mbFee: number;
-	let showSetNewMbGs = false;
-	let btnDisabledSetNewMb: any;
+	getIbList();
+	setWritableBrkList();
+	let mbId = '';
+	let mbEmail = '';
+	let mbName = '';
+	let brkId: number;
+	let ibFee: number;
+	let ibActive = false;
+	let showGsSetIb = false;
+	let btnDisabledSetIb = false;
 	let altBtnText = '신규IB 등록';
 	let altBtnColor = 'variant-filled-primary';
-	const setIBInfo = async () => {
-		if (!(mbEmail && mbName) || !getEmailMatch(mbEmail)) return false;
+	const setIBList = async () => {
+		if (!(mbEmail && mbName && brkId) || !getEmailMatch(mbEmail)) return false;
 		const params = {
 			mbId,
 			mbEmail,
 			mbName,
-			mbBrkId,
-			mbFee
+			brkId,
+			ibFee,
+			ibActive
 		};
-		btnDisabledSetNewMb = showSetNewMbGs = true;
-		const { data } = await instanceWithAuth.post('sys/member/Set_mbIB/', params);
+		btnDisabledSetIb = showGsSetIb = true;
+		const { data } = await instanceWithAuth.post('sys/member/Set_ib_list/', params);
 		const msg = data.data.msg;
-		const toastMsg = msg === 'exist' ? '회원가입된 이메일입니다.' : '회원가입되었습니다.';
+		const mb_id = data.data.mb_id;
+		const toastMsg = msg === 'exist' ? '회원가입된 이메일입니다.' : 'IB회원정보 등록되었습니다.';
 		const ToastSettings = {
 			message: toastMsg,
 			timeout: 3000
 		};
 		toastStore.trigger(ToastSettings);
+		btnDisabledSetIb = showGsSetIb = false;
 		if (msg === 'success') {
-			mbId = '';
-			mbEmail = '';
-			mbName = '';
-			mbBrkId = 0;
-			mbFee = '';
-			getMemberList(4);
+			undoSetIB();
+			getIbList();
+			scrollToId('td' + mb_id);
+			changeClass('tr' + mb_id, 'variant-filled-warning', 2000);
 		}
-		btnDisabledSetNewMb = showSetNewMbGs = false;
 	};
 	const updateIBInfo = (
 		mb_id: string,
 		mb_email: string,
 		mb_name: string,
-		mb_brkId: number,
-		mb_fee: number
+		brk_id: number,
+		ib_fee: number,
+		ib_active: boolean
 	) => {
 		mbId = mb_id;
 		mbEmail = mb_email;
 		mbName = mb_name;
-		mbBrkId = mb_brkId;
-		mbFee = mb_fee;
+		brkId = brk_id;
+		ibFee = ib_fee;
+		ibActive = ib_active;
 		altBtnText = 'IB정보 수정';
 		altBtnColor = 'variant-filled-warning';
-		scrollToId('container-box');
+		scrollToId('formSetIbList');
 	};
 	const undoSetIB = () => {
 		mbId = '';
 		mbEmail = '';
 		mbName = '';
-		mbBrkId = '';
-		mbFee = '';
+		brkId = '';
+		ibFee = '';
+		ibActive = false;
 		altBtnText = '신규IB 등록';
 		altBtnColor = 'variant-filled-primary';
 	};
 </script>
 
 <div in:scale={{ duration: 150 }}>
-	<div class="wrap-box">
+	<div class="wrap-box pos-relative">
+		<span class="pos-abs-top_100" id="formSetIbList" />
 		<form>
 			<input type="hidden" bind:value={mbId} />
 			<input type="email" class="input mb-2" placeholder="이메일" required bind:value={mbEmail} />
 			<input type="text" class="input mb-2" placeholder="이름" required bind:value={mbName} />
-			<select class="select mb-2" bind:value={mbBrkId}>
+			<select class="select mb-2" bind:value={brkId}>
 				<option value="">회사 선택</option>
-				{#if brkList}
-					{#each brkList as brk}
-						<option value={brk.id} selected={brk.id === mbBrkId}>
-							{brk.name}
+				{#if $writableBrkList}
+					{#each $writableBrkList as brk, i}
+						<option value={Number(brk.brk_id)} selected={Number(brk.brk_id) === brkId}>
+							{brk.brk_name}
 						</option>
 					{/each}
 				{/if}
 			</select>
+			<!-- selected={brk.brk_id === brkId} -->
 			<input
 				type="number"
 				class="input mb-2"
-				placeholder="수수료 (소숫점 1자리까지)"
-				bind:value={mbFee}
+				placeholder="수수료 (소수점 1자리까지)"
+				bind:value={ibFee}
 			/>
 			<div class="flex justify-between">
-				<div />
+				<div>
+					<SlideToggle name="slide" bind:checked={ibActive} />
+				</div>
 				<div>
 					<Button
 						addClass="variant-filled-surface me-2 btn-icon btn-icon-sm"
@@ -142,10 +135,10 @@
 						btnText={altBtnText}
 						iconNameE="user-plus"
 						iconNameAlt="user-plus"
-						showGs={showSetNewMbGs}
-						onClick={setIBInfo}
+						showGs={showGsSetIb}
+						onClick={setIBList}
 						btnType="submit"
-						btnDisabled={btnDisabledSetNewMb}
+						btnDisabled={btnDisabledSetIb}
 					/>
 				</div>
 			</div>
@@ -156,36 +149,46 @@
 		<table class="table table-hover">
 			<thead>
 				<tr>
+					<th />
 					<th>Name</th>
 					<th>Info</th>
 					<th>Set</th>
 				</tr>
 			</thead>
 			<tbody>
-				{#if memberList}
-					{#each memberList as row, i}
-						{@const lvNum = Number(row.mb_level)}
-						{@const mbEmail = row.mb_email ? row.mb_email : ''}
-						{@const mbHp = row.mb_hp ? row.mb_hp : ''}
-						{@const mbBrkName = row.brk_name ? row.brk_name : ''}
-						{@const mbBrkFee = row.mb_2 ? row.mb_2 : ''}
-						<tr>
-							<td>
-								{row.mb_name}
+				{#if ibList}
+					{#each ibList as row, i}
+						{@const rowMbHp = row.mb_hp ? row.mb_hp : ''}
+						{@const rowBrkId = row.brk?.brk_id ? Number(row.brk.brk_id) : 0}
+						{@const rowBrkName = row.brk?.brk_name ? row.brk.brk_name : ''}
+						{@const rowIbFee = row.ib?.ib_fee ? Number(row.ib.ib_fee) : 0}
+						{@const rowMbName = row.mb_name ? row.mb_name : ''}
+						{@const rowIbActive = row.ib?.ib_active ? row.ib.ib_active : false}
+						<tr id="tr{row.mb_id}">
+							<td class="table-cell-fit">
+								{#if rowIbActive == false}
+									<IconXi iconName="pause-circle-o" fontSize="2rem" addClass="text-surface-500" />
+								{:else}
+									<IconXi iconName="play-circle" fontSize="2rem" />
+								{/if}
+							</td>
+							<td class="pos-relative">
+								{rowMbName}
 								<p>{row.mb_id}</p>
 								<div class="lvName">
-									{@html lvNameElm(lvNum)}
+									{@html lvNameElm(Number(row.mb_level))}
 								</div>
+								<span class="pos-abs-top_100" id="td{row.mb_id}" />
 							</td>
 							<td class="info">
-								<p><IconXi iconName="park" /> {addCommas(row.mb_point)}</p>
-								<p><IconXi iconName="mail" /> {mbEmail}</p>
-								<p><IconXi iconName="mobile" /> {mbHp}</p>
+								<p><IconXi iconName="park" /> {addCommas(Number(row.mb_point))}</p>
+								<p><IconXi iconName="mail" /> {row.mb_email}</p>
+								<p><IconXi iconName="mobile" /> {rowMbHp}</p>
 								<p>
 									<IconXi iconName="external-link" />
-									{mbBrkName}
-									{#if mbBrkFee}
-										({mbBrkFee}%)
+									{rowBrkName}
+									{#if rowIbFee}
+										({rowIbFee} %)
 									{/if}
 								</p>
 							</td>
@@ -195,33 +198,16 @@
 									iconNameE="cog"
 									iconNameAlt="cog"
 									onClick={() =>
-										updateIBInfo(row.mb_id, row.mb_email, row.mb_name, row.mb_1, row.mb_2)}
+										updateIBInfo(
+											row.mb_id,
+											row.mb_email,
+											rowMbName,
+											rowBrkId,
+											rowIbFee,
+											rowIbActive
+										)}
 								/>
 							</td>
-							<!-- <td>
-								<select
-									class="select"
-									on:change={() => setMbBrk(row.mb_id, row.ref.value, row.ref, mbBrk)}
-									bind:this={row.ref}
-								>
-									<option>회사 선택</option>
-									{#if brkList}
-										{#each brkList as brk}
-											<option value={brk.id} selected={brk.id === mbBrk}>
-												{brk.name}
-											</option>
-										{/each}
-									{/if}
-								</select>
-
-								<div class="input-group input-group-divider grid-cols-[auto_1fr_auto] mt-3">
-									<input
-										type="number"
-										placeholder="수수료"
-										on:keyup={() => setBrkFee(row.mb_id, row.mb_2.value)}
-									/>
-								</div>
-							</td> -->
 						</tr>
 					{/each}
 				{/if}
@@ -245,6 +231,9 @@
 		text-align: start;
 	}
 	form input {
+		text-align: center;
+	}
+	select option {
 		text-align: center;
 	}
 	.wrap-box {

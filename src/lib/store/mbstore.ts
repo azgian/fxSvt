@@ -9,8 +9,9 @@ export const objMbInfo = {
 	mb_point: 0,
 	mb_hp: '',
 	mb_email: '',
-	mb_brkName: '',
-	mb_1: 0,
-	mb_2: 0
+	mb_recommend: '',
+	ib: '',
+	brk: '',
+	company: ''
 };
 export const mb = persisted('mb', objMbInfo);

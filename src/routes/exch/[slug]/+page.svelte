@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { mb } from '$lib/store/mbstore';
 	import { page } from '$app/stores';
-	// import SetIb from './SetIB.svelte';
-	// import SetBR from './SetBR.svelte';
+	import Send from './Send.svelte';
+	import Retn from './Retn.svelte';
 	import { goto } from '$app/navigation';
 </script>
 
-{#if $page.params.slug === 'tab1'}
-	환전
+{#if $page.params.slug === 'send'}
+	<Send />
 {/if}
-{#if $page.params.slug === 'tab2'}
-	충전
+{#if $page.params.slug === 'retn'}
+	<Retn />
 {/if}

@@ -2,13 +2,12 @@
 	import { page } from '$app/stores';
 	import { instance } from '$lib/common/api';
 	import { mb, isLogin } from '$lib/store/mbstore';
-	import { getEmailMatch } from '$lib/config';
+	import { getEmailMatch, setWritableBrkList } from '$lib/config';
 	import { dev } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import IconXi from '$lib/components/IconXi.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import AlertBox from '$lib/components/AlertBox.svelte';
-	import SpinnerBox from '$lib/components/SpinnerBox.svelte';
 	import { scale } from 'svelte/transition';
 	import { popup } from '@skeletonlabs/skeleton';
 	import type { PopupSettings } from '@skeletonlabs/skeleton';
@@ -41,7 +40,6 @@
 		if (authCode !== 'non') initCode = authCode.substr(0, 2);
 		else disabledInputEmail = btnDisabledReqCode = false;
 	};
-
 	let getAuth = false;
 	let numberCode: string;
 	const sendCode = async () => {
@@ -63,14 +61,11 @@
 			const mb_info = data.data.mb;
 			mb.set(mb_info);
 			isLogin.set(true);
-			if (dev) {
-				// console.log('mb_info.mb_id: ', mb_info.mb_id);
-				console.log('mb_info: ', mb_info);
-			}
+			setWritableBrkList();
 			if (!isRegister) {
 				goto('/'); //로그인
 			} else {
-				goto('/office'); //회원정보 설정
+				goto('/office/info'); //회원정보 설정
 			}
 		}
 	};
@@ -185,10 +180,13 @@
 		</div>
 	{/if}
 	{#if isSendCode}
-		{@const btnAction = `<a class="btn variant-filled-tertiary" href="./office">닉네임 설정하기</a>`}
+		{@const btnAction = `<a class="btn variant-filled-tertiary" href="./office/info">회원이름 설정하기</a>`}
 		{#if getAuth}
 			<div class="mt-4" in:scale={{ duration: 150 }}>
-				<AlertBox message="회원가입되었습니다.<br>닉네임을 설정하세요." actionContent={btnAction} />
+				<AlertBox
+					message="회원가입되었습니다.<br>회원이름을 설정하세요."
+					actionContent={btnAction}
+				/>
 			</div>
 		{:else}
 			<div class="mt-4" in:scale={{ duration: 150 }}>

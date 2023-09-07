@@ -1,7 +1,7 @@
-import type { PageLoad } from './$types';
+// import type { PageLoad } from './$types';
 
-export const load = (async ({ params }) => {
-	return {
-		mb_id: params.id
-	};
-}) satisfies PageLoad;
+// export const load = (async ({ params }) => {
+// 	return {
+// 		mbId: params.id
+// 	};
+// }) satisfies PageLoad;

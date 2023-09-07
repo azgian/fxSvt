@@ -4,6 +4,7 @@
 	import { page } from '$app/stores';
 	import SetIb from './SetIB.svelte';
 	import SetBR from './SetBR.svelte';
+	import SetCO from './SetCO.svelte';
 	import { goto } from '$app/navigation';
 	if ($mb.mb_level < sys7Lv) goto('/');
 </script>
@@ -13,4 +14,7 @@
 {/if}
 {#if $page.params.slug === 'setBR'}
 	<SetBR />
+{/if}
+{#if $page.params.slug === 'setCO'}
+	<SetCO />
 {/if}

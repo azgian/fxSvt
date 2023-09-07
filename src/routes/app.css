@@ -1,6 +1,15 @@
 .d-none {
 	display: none;
 }
+
+.pos-relative {
+	position: relative;
+}
+.pos-abs-top_100 {
+	position: absolute;
+	top: -100px;
+}
+
 @media (max-width: 499.98px) {
 	._flex-column {
 		flex-direction: column;

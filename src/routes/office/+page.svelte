@@ -3,171 +3,19 @@
 	import { instanceWithAuth } from '$lib/common/api';
 	import { dev } from '$app/environment';
 	import { mb, isLogin } from '$lib/store/mbstore';
-	import { siteHost, getCopyText, ibLv } from '$lib/config';
+	import { siteHost, getCopyText, ibLv, sys7Lv } from '$lib/config';
 	import IconXi from '$lib/components/IconXi.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { scale } from 'svelte/transition';
 	import AlertBox from '$lib/components/AlertBox.svelte';
+	import ForSys from './ForSys.svelte';
 	if (!$isLogin) goto('/');
-	let mbName: string = $mb.mb_name;
-	let mbHp: string = $mb.mb_hp;
-	let mbId = $mb.mb_id;
-	const setMbName = () => {
-		setMbInfo('mb_name', mbName);
-	};
-	const setMbHp = () => {
-		setMbInfo('mb_hp', mbHp);
-	};
-	let disabledMbName = $mb.mb_name ? true : false;
-	let disabledMbHp = $mb.mb_hp ? true : false;
-	const setMbInfo = async (fld: string, info: string) => {
-		const params = {
-			fld,
-			info,
-			mbId
-		};
-		const { data } = await instanceWithAuth.post('member/auth/Set_mb_info', params);
-		const mb_info = data.data.mb_info;
-		const mb_fld = data.data.mb_fld;
-		const mb_level = data.data.mb_level;
-		if (mb_fld === 'mb_name') {
-			mb.update((info) => {
-				return {
-					...info,
-					mb_name: mb_info
-				};
-			});
-			mbName = $mb.mb_name;
-			disabledMbName = true;
-		}
-		if (mb_fld === 'mb_hp') {
-			mb.update((info) => {
-				return {
-					...info,
-					mb_hp: mb_info
-				};
-			});
-			mbHp = $mb.mb_hp;
-			disabledMbHp = true;
-		}
-		if (mb_level !== $mb.mb_level) {
-			mb.update((info) => {
-				return {
-					...info,
-					mb_level: mb_level
-				};
-			});
-		}
-		if (dev) console.log('D:mb_info: ', mb_info);
-		if (dev) console.log('D:fld: ', mb_fld);
-	};
-	let isCopied = false;
-	const setCopy = () => {
-		getCopyText(siteHost + '/u/' + $mb.mb_id.substring(1));
-		isCopied = true;
-	};
-	// const setTelegram = async (fld: string, info: string) => {
-	// 	const params = {
-	// 		'data-telegram-login':'fynx_bot',
-	// 		'data-size':'medium'
-	// 		'data-auth-url':'/auth/telegram/'
-	// 	}
-	// }
 </script>
 
-<div class="wrap" in:scale={{ duration: 150 }}>
-	{#if $mb.mb_level < 2}
-		<div class="mb-6">
-			<AlertBox
-				message="회원가입 되셨습니다.<br>회원정보를 설정하시면 사이트 이용을 위한 회원승급이 됩니다."
-			/>
-		</div>
-	{/if}
-
-	<form>
-		<h4 class="text-center text-surface-500">
-			<IconXi iconName="mail" />
-			{$mb.mb_email}
-		</h4>
-		{#if $mb.mb_level > ibLv && $mb.mb_brkName}
-			<h4 class="text-center text-surface-500 mt-1">
-				<IconXi iconName="external-link" />
-				{$mb.mb_brkName}
-				{#if $mb.mb_2}
-					<small>(수수료: {$mb.mb_2} %)</small>
-				{/if}
-			</h4>
-		{/if}
-		<label class="label mt-2">
-			<div class="input-group input-group-divider grid-cols-5">
-				<div class="col-span-1"><IconXi iconName="profile-o" /></div>
-				<input
-					type="text"
-					class="col-span-3"
-					placeholder="이름"
-					bind:value={mbName}
-					on:keyup={() => (disabledMbName = false)}
-				/>
-				<Button
-					btnClass=""
-					addClass="variant-filled-secondary col-span-1"
-					iconNameS="pen"
-					iconNameAlt="pen"
-					btnDisabled={disabledMbName}
-					onClick={setMbName}
-					btnType="submit"
-				/>
-			</div>
-			{#if !$mb.mb_name}
-				<span class="text-warning-300"><IconXi iconName="pen-o" /> 회원이름을 설정하세요</span>
-			{/if}
-		</label>
-	</form>
-
-	<form>
-		<label class="label">
-			<div class="input-group input-group-divider grid-cols-5">
-				<div class="col-span-1"><IconXi iconName="mobile" /></div>
-				<input
-					type="number"
-					class="col-span-3"
-					bind:value={mbHp}
-					placeholder="전화번호(숫자만 입력)"
-					on:keyup={() => (disabledMbHp = false)}
-				/>
-				<Button
-					btnClass=""
-					addClass="variant-filled-secondary col-span-1"
-					iconNameS="pen"
-					iconNameAlt="pen"
-					btnDisabled={disabledMbHp}
-					onClick={setMbHp}
-					btnType="submit"
-				/>
-			</div>
-			{#if !$mb.mb_hp}
-				<span class="text-warning-300"><IconXi iconName="pen-o" /> 전화번호를 설정하세요</span>
-			{/if}
-		</label>
-	</form>
-</div>
-{#if $mb.mb_level >= 4}
-	<div class="variant-ghost p-3">
-		<div class="flex justify-between">
-			<h3 id="ibLinkUrl" class="text-surface-400">{siteHost}/u/{$mb.mb_id.substring(1)}</h3>
-			<Button
-				addClass="variant-filled-primary btn-sm"
-				btnText="복사"
-				iconNameS="documents-o"
-				onClick={setCopy}
-			/>
-		</div>
-		{#if isCopied}
-			<span class="text-surface-400"
-				><IconXi iconName="link" /> 복사되었습니다. 원하시는 곳에 붙여넣기 하세요.</span
-			>
-		{/if}
-	</div>
+{#if $mb.mb_level >= sys7Lv}
+	SYS 신청내역
+{:else}
+	MB 신청내역
 {/if}
 
 <style>
