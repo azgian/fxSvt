@@ -4,7 +4,7 @@
 	import { mb, isLogin } from '$lib/store/mbstore';
 	import { addCommas, lvNameElm } from '$lib/config';
 	import IconXi from '$lib/components/IconXi.svelte';
-	const siteLogoSrc = '//' + $page.url.host + '/src/lib/images/logo_fynx.png';
+	const siteLogoSrc = '/images/logo_fynx.png';
 </script>
 
 <div class="flex justify-between">
