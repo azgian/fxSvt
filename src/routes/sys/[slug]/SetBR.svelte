@@ -78,27 +78,23 @@
 				required
 			/>
 			<div class="flex justify-between mt-1">
-				<div>
-					<Button
-						addClass="variant-filled-surface btn-icon btn-icon-sm"
-						iconNameE="undo"
-						iconNameAlt="undo"
-						onClick={undoSetBrk}
-					/>
-				</div>
-				<div>
-					<SlideToggle name="slide" bind:checked={brkActive} />
-					<Button
-						addClass={altBtnColor}
-						btnText={altBtnText}
-						iconNameE="upload"
-						iconNameAlt="upload"
-						showGs={showSpinner}
-						onClick={setBrkInfo}
-						btnType="submit"
-						btnDisabled={btnDisabledSetBrkList}
-					/>
-				</div>
+				<Button
+					addClass="variant-filled-surface btn-icon btn-icon-sm"
+					iconNameE="undo"
+					iconNameAlt="undo"
+					onClick={undoSetBrk}
+				/>
+				<SlideToggle name="slide" bind:checked={brkActive} />
+				<Button
+					addClass="{altBtnColor} btn-sm ms-2"
+					btnText={altBtnText}
+					iconNameE="upload"
+					iconNameAlt="upload"
+					showGs={showSpinner}
+					onClick={setBrkInfo}
+					btnType="submit"
+					btnDisabled={btnDisabledSetBrkList}
+				/>
 			</div>
 		</form>
 	</div>

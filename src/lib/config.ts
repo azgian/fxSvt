@@ -18,9 +18,6 @@ export const changeClass = (elmId: string, className: string, time = 3000) => {
 		}, time);
 	}
 };
-// export const writableTrSort = writable('');
-// export const writableCoinId = writable('');
-// export const writablePriceValue = writable('');
 export const resetTimer = (): void => {
 	document.getElementById('btnTimer')?.click();
 };

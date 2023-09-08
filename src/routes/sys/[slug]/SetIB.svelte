@@ -120,27 +120,23 @@
 				bind:value={ibFee}
 			/>
 			<div class="flex justify-between mt-1">
-				<div>
-					<Button
-						addClass="variant-filled-surface btn-icon btn-icon-sm"
-						iconNameE="undo"
-						iconNameAlt="undo"
-						onClick={undoSetIB}
-					/>
-				</div>
-				<div>
-					<SlideToggle name="slide" bind:checked={ibActive} />
-					<Button
-						addClass={altBtnColor}
-						btnText={altBtnText}
-						iconNameE="user-plus"
-						iconNameAlt="user-plus"
-						showGs={showGsSetIb}
-						onClick={setIBList}
-						btnType="submit"
-						btnDisabled={btnDisabledSetIb}
-					/>
-				</div>
+				<Button
+					addClass="variant-filled-surface btn-icon btn-icon-sm"
+					iconNameE="undo"
+					iconNameAlt="undo"
+					onClick={undoSetIB}
+				/>
+				<SlideToggle name="slide" bind:checked={ibActive} />
+				<Button
+					addClass="{altBtnColor} btn-sm ms-2"
+					btnText={altBtnText}
+					iconNameE="user-plus"
+					iconNameAlt="user-plus"
+					showGs={showGsSetIb}
+					onClick={setIBList}
+					btnType="submit"
+					btnDisabled={btnDisabledSetIb}
+				/>
 			</div>
 		</form>
 	</div>

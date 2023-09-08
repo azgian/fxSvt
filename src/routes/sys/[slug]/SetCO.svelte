@@ -97,27 +97,23 @@
 				required
 			/>
 			<div class="flex justify-between">
-				<div>
-					<SlideToggle name="slide" bind:checked={companyActive} />
-				</div>
-				<div>
-					<Button
-						addClass="variant-filled-surface me-2 btn-icon btn-icon-sm"
-						iconNameE="undo"
-						iconNameAlt="undo"
-						onClick={undoSetCompany}
-					/>
-					<Button
-						addClass="{altBtnColor} btn-sm"
-						btnText={altBtnText}
-						iconNameE="upload"
-						iconNameAlt="upload"
-						showGs={showGsSet}
-						btnDisabled={btnDisabledSet}
-						onClick={setCompanyList}
-						btnType="submit"
-					/>
-				</div>
+				<Button
+					addClass="variant-filled-surface me-2 btn-icon btn-icon-sm"
+					iconNameE="undo"
+					iconNameAlt="undo"
+					onClick={undoSetCompany}
+				/>
+				<SlideToggle name="slide" bind:checked={companyActive} />
+				<Button
+					addClass="{altBtnColor} btn-sm ms-3"
+					btnText={altBtnText}
+					iconNameE="upload"
+					iconNameAlt="upload"
+					showGs={showGsSet}
+					btnDisabled={btnDisabledSet}
+					onClick={setCompanyList}
+					btnType="submit"
+				/>
 			</div>
 		</form>
 	</div>
