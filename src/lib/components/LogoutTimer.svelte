@@ -7,7 +7,7 @@
 	import iconLogout from '$lib/images/icon_logout.png';
 	import { goto } from '$app/navigation';
 
-	const logoutLimitedTime = 6000; // 10분
+	const logoutLimitedTime = 600; // 10분
 	let logoutTime = logoutLimitedTime;
 	const setLogoutTimer = (time: number): string => {
 		if (time < 1) setLogout();
