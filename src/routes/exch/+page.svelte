@@ -3,13 +3,13 @@
 </script>
 
 <div class="wrap" in:scale={{ duration: 150 }}>
-	<form>
+	<!-- <form>
 		<input class="input" type="text" placeholder="Account" />
 		<input class="input" type="number" placeholder="송금액" />
 		<div class="flex justify-end">
 			<button class="btn variant-filled-primary">송금 신청</button>
 		</div>
-	</form>
+	</form> -->
 </div>
 
 <style>
