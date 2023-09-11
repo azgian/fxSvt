@@ -8,10 +8,11 @@
 	import LogoutTimer from '$lib/components//LogoutTimer.svelte';
 	import TopBar from '$lib/components//TopBar.svelte';
 	import { isLogin, mb } from '$lib/store/mbstore';
-	import { writableBrkList } from '$lib/config';
+	import { getCompanyInfo, sys7Lv, writableCompanyInfo } from '$lib/config';
 	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
+	if (Number($mb.mb_level) === sys7Lv) getCompanyInfo($mb.company?.company_id);
 </script>
 
 <AppShell
@@ -36,7 +37,7 @@
 		<div id="container-box">
 			<slot />
 			<!-- <pre class="pt-6">
-				{JSON.stringify($writableBrkList)}
+				{JSON.stringify($writableCompanyInfo)}
 				{JSON.stringify($mb)}
 			</pre> -->
 		</div>

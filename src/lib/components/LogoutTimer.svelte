@@ -3,7 +3,7 @@
 	import { page } from '$app/stores';
 	import IconXi from './IconXi.svelte';
 	import { Toast, toastStore } from '@skeletonlabs/skeleton';
-	import { mb, isLogin, objMbInfo } from '$lib/store/mbstore';
+	import { mb, isLogin, objMbInfo, writableCompanyInfo } from '$lib/store/mbstore';
 	import iconLogout from '$lib/images/icon_logout.png';
 	import { goto } from '$app/navigation';
 
@@ -52,6 +52,7 @@
 		localStorage.clear();
 		mb.set(objMbInfo);
 		isLogin.set(false);
+		writableCompanyInfo.set('');
 	};
 
 	const callLogout = (): void => {

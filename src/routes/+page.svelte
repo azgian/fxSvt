@@ -8,8 +8,30 @@
 	import { scale } from 'svelte/transition';
 </script>
 
+<!-- <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+	{
+	"interval": "4h",
+	"width": 425,
+	"isTransparent": true,
+	"height": 450,
+	"symbol": "FX_IDC:EURUSD",
+	"showIntervalTabs": true,
+	"locale": "kr",
+	"colorTheme": "light"
+  }
+	</script> -->
+
 {#if !$isLogin}
 	<LoginPage />
 {:else}
-	<div in:scale={{ duration: 150 }}>메인페이지</div>
+	<div in:scale={{ duration: 150 }}>
+		<!-- <div class="tradingview-widget-container">
+			<div class="tradingview-widget-container__widget" />
+			<div class="tradingview-widget-copyright">
+				<a href="https://kr.tradingview.com/" rel="noopener nofollow" target="_blank"
+					><span class="blue-text">트레이딩뷰에서 모든 시장 추적</span></a
+				>
+			</div>
+		</div> -->
+	</div>
 {/if}

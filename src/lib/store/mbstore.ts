@@ -15,3 +15,4 @@ export const objMbInfo = {
 	company: ''
 };
 export const mb = persisted('mb', objMbInfo);
+export const writableCompanyInfo = writable('');

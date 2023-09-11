@@ -2,15 +2,17 @@
 	import { instanceWithAuth } from '$lib/common/api';
 	import { scale } from 'svelte/transition';
 	import Button from '$lib/components/Button.svelte';
-	import { scrollToId, changeClass } from '$lib/config';
+	import { scrollToId } from '$lib/config';
 	import { toastStore, SlideToggle } from '@skeletonlabs/skeleton';
 	import IconXi from '$lib/components/IconXi.svelte';
+	import { mb } from '$lib/store/mbstore';
 	let companyList: any[];
 	const getCompanyList = async () => {
 		const { data } = await instanceWithAuth.post('sys/member/Get_company_list/');
 		companyList = data.data;
 	};
 	getCompanyList();
+	let mbId: string;
 	let mbName: string;
 	let mbEmail: string;
 	let companyId: number;
@@ -26,22 +28,22 @@
 	let btnDisabledSet = false;
 	let altBtnText = '신규회사 등록';
 	let altBtnColor = 'variant-filled-tertiary';
-	let newSet = true;
+	const sysLevel = $mb.mb_level;
 	const setCompanyList = async () => {
-		if (newSet && !(companyName && mbName && mbEmail)) return false;
+		if (!(companyName && mbName && mbEmail)) return false;
 		btnDisabledSet = showGsSet = true;
-		// console.log('companyId: ', companyId);
-		// console.log('companyActive: ', companyActive);
 		const params = {
 			companyId,
+			mbId,
 			mbName,
 			mbEmail,
 			companyName,
-			companyActive
+			companyDomain,
+			companyActive,
+			sysLevel
 		};
 		const { data } = await instanceWithAuth.post('sys/member/Set_company_list/', params);
 		const msg = data.data.msg;
-		const company_id = data.data.company_id;
 		const toastMsg = msg === 'exist' ? '존재하는 이메일입니다.' : '회사정보 등록되었습니다.';
 		const ToastSettings = {
 			message: toastMsg,
@@ -52,25 +54,36 @@
 		if (msg === 'success') {
 			undoSetCompany();
 			getCompanyList();
-			scrollToId('td' + company_id);
-			changeClass('tr' + company_id, 'variant-filled-warning', 2000);
 		}
 	};
-	const updateCompanyInfo = (company_id: number, company_name: string, company_active: boolean) => {
+	const updateCompanyInfo = (
+		company_id: number,
+		company_name: string,
+		company_domain: string,
+		mb_id: string,
+		mb_name: string,
+		mb_email: string,
+		company_active: boolean
+	) => {
 		companyId = company_id;
 		companyName = company_name;
+		companyDomain = company_domain;
 		companyActive = company_active;
-		console.log('company_active: ', company_active);
-		newSet = false;
+		mbId = mb_id;
+		mbName = mb_name;
+		mbEmail = mb_email;
 		scrollToId('formSetCompany');
 		altBtnText = '회사정보 수정';
-		altBtnColor = 'variant-filled-warning';
+		altBtnColor = 'variant-filled-success';
 	};
 	const undoSetCompany = () => {
 		companyId = 0;
+		mbId = '';
+		mbName = '';
+		mbEmail = '';
 		companyName = '';
+		companyDomain = '';
 		companyActive = false;
-		newSet = true;
 		altBtnText = '신규회사 등록';
 		altBtnColor = 'variant-filled-tertiary';
 	};
@@ -88,7 +101,6 @@
 				bind:value={companyName}
 				required
 			/>
-			<input class="input mb-2" type="email" placeholder="이메일" bind:value={mbEmail} required />
 			<input
 				class="input mb-2"
 				type="text"
@@ -96,6 +108,21 @@
 				bind:value={mbName}
 				required
 			/>
+			<input
+				class="input mb-2"
+				type="email"
+				placeholder="관리자 이메일"
+				bind:value={mbEmail}
+				required
+			/>
+			<input
+				class="input mb-2"
+				type="text"
+				placeholder="도메인"
+				bind:value={companyDomain}
+				required
+			/>
+			<input type="hidden" bind:value={mbId} />
 			<div class="flex justify-between">
 				<Button
 					addClass="variant-filled-surface me-2 btn-icon btn-icon-sm"
@@ -133,7 +160,7 @@
 					{#each companyList as row, i}
 						<tr id="tr{row.company_id}">
 							<td class="table-cell-fit">
-								{#if row.company_active == false}
+								{#if row.company_active == 0}
 									<IconXi iconName="pause-circle-o" fontSize="2rem" addClass="text-surface-500" />
 								{:else}
 									<IconXi iconName="play-circle" fontSize="2rem" />
@@ -141,16 +168,32 @@
 							</td>
 							<td class="pos-relative">
 								<span class="pos-abs-top_100" id="td{row.company_id}" />
-								{row.company_name}
+								<p>
+									{row.company_name}
+								</p>
+								{row.company_domain}
 							</td>
-							<td />
-							<td class="table-cell-fit">
+							<td>
+								<p>
+									{row.mb_name}
+								</p>
+								{row.mb_email}
+							</td>
+							<td>
 								<Button
 									addClass="btn-icon btn-icon-sm variant-filled-surface"
 									iconNameE="cog"
 									iconNameAlt="cog"
 									onClick={() =>
-										updateCompanyInfo(row.company_id, row.company_name, row.company_active)}
+										updateCompanyInfo(
+											row.company_id,
+											row.company_name,
+											row.company_domain,
+											row.mb_id,
+											row.mb_name,
+											row.mb_email,
+											row.company_active
+										)}
 								/>
 							</td>
 						</tr>

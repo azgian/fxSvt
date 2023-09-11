@@ -1,5 +1,6 @@
 import { writable } from 'svelte/store';
 import { instanceWithAuth } from '$lib/common/api';
+import { mb } from '$lib/store/mbstore';
 export const siteDomain = 'fynx.co.kr';
 export const siteHost = 'http://' + siteDomain;
 export const API_G5_URL = import.meta.env.VITE_API_ENDPOINT;
@@ -8,6 +9,14 @@ export const writableBrkList = writable('');
 export const setWritableBrkList = async () => {
 	const { data } = await instanceWithAuth.post('sys/member/Get_brk_list');
 	writableBrkList.set(data.data);
+};
+export const writableCompanyInfo = writable('');
+export const getCompanyInfo = async (company_id: number) => {
+	const params = {
+		company_id
+	};
+	const { data } = await instanceWithAuth.post('sys/member/Get_company_list', params);
+	writableCompanyInfo.set(data.data);
 };
 export const changeClass = (elmId: string, className: string, time = 3000) => {
 	const element = document.getElementById(elmId);

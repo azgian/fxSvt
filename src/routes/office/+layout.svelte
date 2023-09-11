@@ -7,7 +7,7 @@
 	if (!$isLogin) goto('/');
 	const pageRouteId = String($page.route.id).split('/');
 	const baseUrl = pageRouteId[1];
-	const slugName = $mb.mb_level >= sys7Lv ? '회사정보' : '회원정보';
+	const slugName = Number($mb.mb_level) < sys7Lv ? '회원정보' : '회사정보';
 	const tabsArr = [
 		{ link: baseUrl, name: '신청내역', mbLv: 2 },
 		{ link: 'info', name: slugName, mbLv: 2 }

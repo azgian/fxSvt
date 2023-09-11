@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import { resetTimer } from '$lib/config';
 	import { mb, isLogin } from '$lib/store/mbstore';
 	import { addCommas, lvNameElm } from '$lib/config';

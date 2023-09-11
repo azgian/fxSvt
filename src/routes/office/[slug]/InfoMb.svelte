@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { instanceWithAuth } from '$lib/common/api';
-	import { dev } from '$app/environment';
 	import { mb } from '$lib/store/mbstore';
 	import { siteHost, getCopyText, ibLv } from '$lib/config';
 	import IconXi from '$lib/components/IconXi.svelte';

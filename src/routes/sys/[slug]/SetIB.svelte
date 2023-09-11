@@ -36,7 +36,7 @@
 	let showGsSetIb = false;
 	let btnDisabledSetIb = false;
 	let altBtnText = '신규IB 등록';
-	let altBtnColor = 'variant-filled-primary';
+	let altBtnColor = 'variant-filled-tertiary';
 	const setIBList = async () => {
 		if (!(mbEmail && mbName && brkId) || !getEmailMatch(mbEmail)) return false;
 		const params = {
@@ -80,7 +80,7 @@
 		ibFee = ib_fee;
 		ibActive = ib_active;
 		altBtnText = 'IB정보 수정';
-		altBtnColor = 'variant-filled-warning';
+		altBtnColor = 'variant-filled-success';
 		scrollToId('formSetIbList');
 	};
 	const undoSetIB = () => {
@@ -91,7 +91,13 @@
 		ibFee = '';
 		ibActive = false;
 		altBtnText = '신규IB 등록';
-		altBtnColor = 'variant-filled-primary';
+		altBtnColor = 'variant-filled-tertiary';
+	};
+	const deleteIbId = async (mbId: number) => {
+		if (!confirm('이 정보를 삭제하시겠습니까?')) return false;
+		const params = { mbId };
+		const { data } = await instanceWithAuth.post('sys/member/Delete_ib_list/', params);
+		getIbList();
 	};
 </script>
 
@@ -188,7 +194,13 @@
 									{/if}
 								</p>
 							</td>
-							<td class="table-cell-fit">
+							<td>
+								<Button
+									addClass="btn-icon btn-icon-sm variant-filled-error me-2"
+									iconNameE="trash"
+									iconNameAlt="trash"
+									onClick={() => deleteIbId(row.mb_id)}
+								/>
 								<Button
 									addClass="btn-icon btn-icon-sm variant-filled-surface"
 									iconNameE="cog"

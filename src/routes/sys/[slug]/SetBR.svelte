@@ -2,7 +2,7 @@
 	import { instanceWithAuth } from '$lib/common/api';
 	import { scale } from 'svelte/transition';
 	import Button from '$lib/components/Button.svelte';
-	import { scrollToId, writableBrkList, setWritableBrkList, changeClass } from '$lib/config';
+	import { scrollToId, writableBrkList, setWritableBrkList } from '$lib/config';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import IconXi from '$lib/components/IconXi.svelte';
 	let brkId: number;
@@ -28,8 +28,6 @@
 		if (data.data.result === 'success') {
 			setWritableBrkList();
 			undoSetBrk();
-			scrollToId('td' + data.data.brk_id);
-			changeClass('tr' + data.data.brk_id, 'variant-filled-warning', 2000);
 		}
 	};
 	let newBrk = true;
@@ -48,7 +46,7 @@
 		newBrk = false;
 		scrollToId('formSetBr');
 		altBtnText = 'BR정보 수정';
-		altBtnColor = 'variant-filled-warning';
+		altBtnColor = 'variant-filled-success';
 	};
 	const undoSetBrk = () => {
 		brkId = '';
@@ -130,7 +128,7 @@
 								</p>
 								{row.brk_fee} %
 							</td>
-							<td class="table-cell-fit">
+							<td>
 								<Button
 									addClass="btn-icon btn-icon-sm variant-filled-surface"
 									iconNameE="cog"
